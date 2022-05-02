@@ -1,6 +1,6 @@
 ## Interface: 90200
 ## Author: cqwrteur
-## Title: Peachpies Arcane
+## Title: Peachpies Arcane Mage
 ## Version: @project-version@
 ## LoadOnDemand: 1
 ## X-PEACHPIES-CLASS: 8
