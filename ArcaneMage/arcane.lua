@@ -33,6 +33,7 @@ local function cofunc(yd)
 	local cooldowns = grids_meta.cooldowns
 	local grid_profile
 	local center_text1 = center_texts[1]
+	local bottom_text1 = bottom_texts[1]
 	while true do
 		repeat
 		if yd ==1 or yd == 2 then
@@ -58,7 +59,6 @@ local function cofunc(yd)
 					max_arcane_harmony_stacks = 10
 				end
 				local has_clearcasting = false
-				local has_arcane_power = false
 				local has_rune_of_power_or_arcane_power = false
 				for i=1,40 do
 					local name, icon, count, debuffType, duration, expirationTime, source, isStealable, 
@@ -75,6 +75,12 @@ local function cofunc(yd)
 					if spellId == 116041 or spellId == 12042 then
 						has_rune_of_power_or_arcane_power = true
 					end
+				end
+				if arcane_harmony_stacks == 0 then
+					bottom_text1:Hide()
+				else
+					Peachpies_GridCenter(grid_profile,arcane_harmony_stacks,12,18,bottom_text1)
+					bottom_text1:Show()
 				end
 				local has_radiant_spark
 				local radiant_spark_vulnerability_counts = 0
@@ -206,7 +212,7 @@ local function cofunc(yd)
 				end
 				local t = unit_range("target")
 				if t then
-					Peachpies_GridCenter(grid_profile,t,10,43,center_texts[1],"%.0f")
+					Peachpies_GridCenter(grid_profile,t,10,43,center_text1,"%.0f")
 				end
 				for j = 1,#monitor_spells do
 					local jmm1 = j+m-1
