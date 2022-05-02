@@ -95,8 +95,6 @@ local function cofunc(yd)
 					end
 					if spellId == 307443 then	-- Radiant Spark
 						has_radiant_spark = true
---						print(name, icon, count, debuffType, duration, expirationTime, source, isStealable, 
---						nameplateShowPersonal, spellId)
 					end
 				end
 				local arcane_orb_casted = false
