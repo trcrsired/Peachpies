@@ -26,7 +26,7 @@ function Peachpies_Options:OnProfileChanged()
 end
 
 function Peachpies_Options.set_func(info,val)
-	local id = tonumber(info[2])
+	local id = info[2]
 	local p = Peachpies.db.profile[id][info[1]]
 	local meta = getmetatable(p)
 	local name = info[3]
@@ -34,15 +34,15 @@ function Peachpies_Options.set_func(info,val)
 		val = nil
 	end
 	rawset(p,name,val)
-	coroutine.resume(Peachpies[info[1]][id],0)
+	Peachpies_Options:SendMessage("Peachpies_OnProfileChanged")
 end
 
 function Peachpies_Options.get_func(info)
-	return Peachpies.db.profile[tonumber(info[2])][info[1]][info[3]]
+	return Peachpies.db.profile[info[2]][info[1]][info[3]]
 end
 
 function Peachpies_Options.set_func_color(info,r,g,b,a)
-	local id = tonumber(info[2])
+	local id = info[2]
 	local p = Peachpies.db.profile[id][info[1]]
 	local n = info[3]
 	local meta = getmetatable(p)
@@ -61,7 +61,7 @@ function Peachpies_Options.set_func_color(info,r,g,b,a)
 end
 
 function Peachpies_Options.get_func_color(info)
-	local id = tonumber(info[2])
+	local id = info[2]
 	local p = Peachpies.db.profile[id][info[1]]
 	local n = info[3]
 	return p[n.."R"],p[n.."G"],p[n.."B"],p[n.."A"]
@@ -70,9 +70,9 @@ end
 function Peachpies_Options.GenerateB(key,name,b)
 	local gm = {}
 	for k,v in pairs(Peachpies[key]) do
-		gm[tostring(k)] = 
+		gm[k] = 
 		{
-			name = GetSpellInfo(k),
+			name = k,
 			type = "group",
 			args = b
 		}

@@ -17,12 +17,14 @@ local UnitAffectingCombat = UnitAffectingCombat
 local UnitIsVisible = UnitIsVisible
 
 local function cofunc(yd)
-	local specid = 62
 	local m = 5
 	--Arcane Power, Touch of the Magi,Radiant Spark , Rune of Power, Mirror, Timewrap in reverse order
 	local monitor_spells = {116011,307443,321507,12042,55342}
 	local n = #monitor_spells + m
-	local grids_meta = Peachpies.CreateGrids(specid,n,m)
+
+	local specid,specname = GetSpecializationInfoByID(62)
+
+	local grids_meta = Peachpies.CreateGrids(specname,n,m)
 	local globalframe = grids_meta.globalframe
 	local backgrounds = grids_meta.backgrounds
 	local center_texts = grids_meta.center_texts
@@ -176,7 +178,7 @@ local function cofunc(yd)
 			end	
 		elseif yd == 0 then
 			if GetSpecialization() == 1 then
-				grid_profile = Peachpies.GridsConfig(Peachpies.GetProfile(specid),grids_meta)
+				grid_profile = Peachpies.GridsConfig(Peachpies.GetProfile(specname),grids_meta)
 				if grid_profile.Enable then
 					yd=coyield(true)
 				else
