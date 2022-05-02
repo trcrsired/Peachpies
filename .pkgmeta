@@ -16,4 +16,4 @@ externals:
 
 move-folders:
 	Peachpies/Options: Peachpies_Options
-	Peachpies/Arcane: Peachpies_Arcane
+	Peachpies/ArcaneMage: Peachpies_ArcaneMage

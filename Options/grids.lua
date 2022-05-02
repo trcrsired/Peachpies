@@ -1,4 +1,3 @@
-local Peachpies = LibStub("AceAddon-3.0"):GetAddon("Peachpies")
 local Peachpies_Options = LibStub("AceAddon-3.0"):GetAddon("Peachpies_Options")
 local LSM = LibStub("LibSharedMedia-3.0")
 
@@ -19,7 +18,7 @@ local function get_order()
 	return temp
 end
 
-Peachpies_Options.GenerateB("grid","Grid",
+Peachpies_Options.GenerateB("grids","Grids",
 {
 	Enable =
 	{
@@ -37,23 +36,23 @@ Peachpies_Options.GenerateB("grid","Grid",
 		set = set_func,
 		get = get_func,
 	},
-	Left =
+	x =
 	{
-		name = WARDROBE_PREV_VISUAL_KEY,
+		name = "x",
 		type = "range",
-		min = 0,
-		max = cvar_width,
+		min = -cvar_width/2,
+		max = cvar_width/2,
 		step = 1,
 		order = get_order(),
 		set = set_func,
 		get = get_func,
 	},
-	Bottom =
+	y =
 	{
-		name = "BOTTOM",
+		name = "y",
 		type = "range",
-		min = 0,
-		max = cvar_height,
+		min = -cvar_height/2,
+		max = cvar_height/2,
 		step = 1,
 		order = get_order(),
 		set = set_func,
