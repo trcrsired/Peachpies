@@ -59,6 +59,7 @@ local function cofunc(yd)
 					max_arcane_harmony_stacks = 10
 				end
 				local has_clearcasting = false
+				local has_rune_of_power = false
 				local has_rune_of_power_or_arcane_power = false
 				for i=1,40 do
 					local name, icon, count, debuffType, duration, expirationTime, source, isStealable, 
@@ -72,7 +73,11 @@ local function cofunc(yd)
 					if spellId == 263725 then
 						has_clearcasting = true
 					end
-					if spellId == 116014 or spellId == 12042 then
+					if spellId == 116014 then
+						has_rune_of_power = true
+						has_rune_of_power_or_arcane_power = true
+					end
+					if spellId == 12042 then
 						has_rune_of_power_or_arcane_power = true
 					end
 				end
@@ -119,9 +124,11 @@ local function cofunc(yd)
 					if duration == gcd_duration or duration == 0 then
 						burst_totm = true
 					end
-					start, duration, enabled, modRate = GetSpellCooldown(12042)	--arcane power
-					if duration == 0 then
-						burst_arcane_power = true
+					if not has_rune_of_power then
+						start, duration, enabled, modRate = GetSpellCooldown(12042)	--arcane power
+						if duration == 0 then
+							burst_arcane_power = true
+						end
 					end
 				end
 
