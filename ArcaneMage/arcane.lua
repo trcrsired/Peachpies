@@ -72,7 +72,7 @@ local function cofunc(yd)
 					if spellId == 263725 then
 						has_clearcasting = true
 					end
-					if spellId == 116041 or spellId == 12042 then
+					if spellId == 116014 or spellId == 12042 then
 						has_rune_of_power_or_arcane_power = true
 					end
 				end
@@ -101,6 +101,31 @@ local function cofunc(yd)
 				local casting_first_spell = true
 				local totm_casted = false
 				local i = 1
+				local burst_phase = has_radiant_spark or has_rune_of_power_or_arcane_power
+				local castname, casttext, casttexture, caststartTimeMS, castendTimeMS, castisTradeSkill, castcastID, castnotInterruptible, castspellId = UnitCastingInfo("player")
+				if castspellId == 116011 or castspellId == 307443 or castspellId == 321507 or castspellId == 12042 then
+					burst_phase = true
+				end
+				local burst_radiant_spark,burst_totm, burst_arcane_power
+				if burst_phase then
+					local start, duration, enabled, modRate
+					if castspellId ~= 307443 then
+						start, duration, enabled, modRate = GetSpellCooldown(307443)	--radiant spark
+						if duration == gcd_duration or duration == 0 then
+							burst_radiant_spark = true
+						end
+					end
+					start, duration, enabled, modRate = GetSpellCooldown(321507)	--touch of the magi
+					if duration == gcd_duration or duration == 0 then
+						burst_totm = true
+					end
+					start, duration, enabled, modRate = GetSpellCooldown(12042)	--arcane power
+					if duration == 0 then
+						burst_arcane_power = true
+					end
+				end
+
+				--GetSpellCooldown(307443)
 				while i <= 4 do
 					local current_spell = 44425
 					repeat
@@ -116,7 +141,23 @@ local function cofunc(yd)
 								break
 							end
 						end
-						if has_radiant_spark or has_rune_of_power_or_arcane_power then
+						if burst_phase then
+							if burst_radiant_spark then
+								current_spell = 307443
+								burst_radiant_spark = false
+								break
+							end
+							if burst_totm then
+								current_spell = 321507
+								burst_totm = false
+								charges = max_charges
+								break
+							end
+							if burst_arcane_power then
+								current_spell = 12042
+								burst_arcane_power = false
+								break
+							end
 							if charges < max_charges then
 								-- Arcane Orb
 								if IsUsableSpell(153626) then
@@ -134,7 +175,7 @@ local function cofunc(yd)
 								end
 							end
 						else
-							if has_clearcasting and not has_radiant_spark and not has_rune_of_power_or_arcane_power then
+							if has_clearcasting and not burst_phase then
 								arcane_harmony_stacks = arcane_harmony_stacks + 8
 								current_spell = 5143
 								has_clearcasting = false
@@ -194,7 +235,6 @@ local function cofunc(yd)
 					until true
 					local skip_this_round = false
 					if casting_first_spell then
-						local castname, casttext, casttexture, caststartTimeMS, castendTimeMS, castisTradeSkill, castcastID, castnotInterruptible, castspellId = UnitCastingInfo("player")
 						if castname then
 							if castendTimeMS < caststartTimeMS + 0.5 and castspellId == current_spell then
 								skip_this_round = true
