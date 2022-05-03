@@ -70,15 +70,10 @@ local function cofunc()
 	Peachpies:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED",resume,0)
 	Peachpies:RegisterEvent("PLAYER_TALENT_UPDATE",resume,0)
 	Peachpies:RegisterMessage("Peachpies_OnProfileChanged",resume,0)
-	local CombatLogGetCurrentEventInfo = CombatLogGetCurrentEventInfo
-	local UnitGUID = UnitGUID
-	local function functionresume(...)
-		local timestamp, subevent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags =  CombatLogGetCurrentEventInfo()
-		if subevent == "SPELL_CAST_START" or subevent == "SPELL_CAST_SUCCESS" then
-			local playerguid = UnitGUID("player")
-			if sourceGUID == playerguid then
-				coresume(current,...)
-			end
+	local UnitIsUnit = UnitIsUnit
+	local function functionresume(tag,_,unit)
+		if unit == "player" or UnitIsUnit(unit,"player") then
+			coresume(current,tag)
 		end
 	end
 	local runnings = {}
@@ -105,7 +100,8 @@ local function cofunc()
 				Peachpies:RegisterEvent("ACTIONBAR_UPDATE_USABLE",resume,2)
 				Peachpies:RegisterEvent("SPELL_UPDATE_CHARGES",resume,2)
 				Peachpies:RegisterEvent("PLAYER_TARGET_CHANGED",resume,2)
-				Peachpies:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED",functionresume,2)
+				Peachpies:RegisterEvent("UNIT_SPELLCAST_SENT",functionresume,3)
+				Peachpies:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED",functionresume,3)
 				if ticker == nil then
 					ticker = C_Timer.NewTicker(0.05,function()
 						coroutine.resume(current,1)
@@ -116,7 +112,8 @@ local function cofunc()
 				Peachpies:UnregisterEvent("ACTIONBAR_UPDATE_USABLE")
 				Peachpies:UnregisterEvent("SPELL_UPDATE_CHARGES")
 				Peachpies:UnregisterEvent("PLAYER_TARGET_CHANGED")
-				Peachpies:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+				Peachpies:UnregisterEvent("UNIT_SPELLCAST_SENT")
+				Peachpies:UnregisterEvent("UNIT_SPELLCAST_SUCCEEDED")
 				if ticker then
 					ticker:Cancel()
 					ticker = nil
