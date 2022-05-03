@@ -124,7 +124,7 @@ local function cofunc(yd)
 					if duration == gcd_duration or duration == 0 then
 						burst_totm = true
 					end
-					if not has_rune_of_power then
+					if not has_rune_of_power and castspellId ~= 116011 then
 						start, duration, enabled, modRate = GetSpellCooldown(12042)	--arcane power
 						if duration == 0 then
 							burst_arcane_power = true
