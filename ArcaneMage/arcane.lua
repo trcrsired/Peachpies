@@ -114,10 +114,13 @@ local function cofunc(yd)
 				local burst_radiant_spark,burst_totm, burst_arcane_power
 				if burst_phase then
 					local start, duration, enabled, modRate
-					if castspellId ~= 307443 then
+					if castspellId == 307443 then
+						has_radiant_spark = true
+					else
 						start, duration, enabled, modRate = GetSpellCooldown(307443)	--radiant spark
 						if duration == gcd_duration or duration == 0 then
 							burst_radiant_spark = true
+							has_radiant_spark = true
 						end
 					end
 					start, duration, enabled, modRate = GetSpellCooldown(321507)	--touch of the magi
