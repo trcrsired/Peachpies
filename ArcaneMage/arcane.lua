@@ -60,7 +60,7 @@ local function cofunc(yd)
 				end
 				local has_clearcasting = false
 				local has_rune_of_power = false
-				local has_rune_of_power_or_arcane_power = false
+				local has_arcane_power = false
 				for i=1,40 do
 					local name, icon, count, debuffType, duration, expirationTime, source, isStealable, 
 					nameplateShowPersonal, spellId = UnitAura("PLAYER",i,"PLAYER|HELPFUL")
@@ -75,10 +75,9 @@ local function cofunc(yd)
 					end
 					if spellId == 116014 then
 						has_rune_of_power = true
-						has_rune_of_power_or_arcane_power = true
 					end
 					if spellId == 12042 then
-						has_rune_of_power_or_arcane_power = true
+						has_arcane_power = true
 					end
 				end
 				if arcane_harmony_stacks == 0 then
@@ -102,35 +101,52 @@ local function cofunc(yd)
 						has_radiant_spark = true
 					end
 				end
+				local burn_radiant_spark,burn_totm, burn_arcane_power
+				if not has_rune_of_power then
+					local start, duration, enabled, modRate = GetSpellCooldown(116011)	--rune of power
+					if duration ~= gcd_duration and duration ~= 0 then
+						if starttime < start + 1 then
+							has_rune_of_power = true
+						end
+					end
+				end
 				local arcane_orb_casted = false
 				local casting_first_spell = true
 				local totm_casted = false
 				local i = 1
-				local burst_phase = has_radiant_spark or has_rune_of_power_or_arcane_power
+				local has_rune_of_power_or_arcane_power = has_rune_of_power or has_arcane_power
+				local burn_phase = has_radiant_spark or has_rune_of_power_or_arcane_power
 				local castname, casttext, casttexture, caststartTimeMS, castendTimeMS, castisTradeSkill, castcastID, castnotInterruptible, castspellId = UnitCastingInfo("player")
 				if castspellId == 116011 or castspellId == 307443 or castspellId == 321507 or castspellId == 12042 then
-					burst_phase = true
+					burn_phase = true
 				end
-				local burst_radiant_spark,burst_totm, burst_arcane_power
-				if burst_phase then
+				if burn_phase then
 					local start, duration, enabled, modRate
+					if not has_rune_of_power then
+						start, duration, enabled, modRate = GetSpellCooldown(116011)	--rune of power
+						if duration ~= gcd_duration and duration ~= 0 then
+							if start + 1 < starttime then
+								has_rune_of_power = true
+							end
+						end
+					end
 					if castspellId == 307443 then
 						has_radiant_spark = true
 					else
 						start, duration, enabled, modRate = GetSpellCooldown(307443)	--radiant spark
 						if duration == gcd_duration or duration == 0 then
-							burst_radiant_spark = true
+							burn_radiant_spark = true
 							has_radiant_spark = true
 						end
 					end
 					start, duration, enabled, modRate = GetSpellCooldown(321507)	--touch of the magi
 					if duration == gcd_duration or duration == 0 then
-						burst_totm = true
+						burn_totm = true
 					end
 					if not has_rune_of_power and castspellId ~= 116011 then
 						start, duration, enabled, modRate = GetSpellCooldown(12042)	--arcane power
 						if duration == 0 then
-							burst_arcane_power = true
+							burn_arcane_power = true
 						end
 					end
 				end
@@ -151,21 +167,21 @@ local function cofunc(yd)
 								break
 							end
 						end
-						if burst_phase then
-							if burst_radiant_spark then
+						if burn_phase then
+							if burn_radiant_spark then
 								current_spell = 307443
-								burst_radiant_spark = false
+								burn_radiant_spark = false
 								break
 							end
-							if burst_totm then
+							if burn_totm then
 								current_spell = 321507
-								burst_totm = false
+								burn_totm = false
 								charges = max_charges
 								break
 							end
-							if burst_arcane_power then
+							if burn_arcane_power then
 								current_spell = 12042
-								burst_arcane_power = false
+								burn_arcane_power = false
 								break
 							end
 							if charges < max_charges then
@@ -185,7 +201,7 @@ local function cofunc(yd)
 								end
 							end
 						else
-							if has_clearcasting and not burst_phase then
+							if has_clearcasting and not burn_phase then
 								arcane_harmony_stacks = arcane_harmony_stacks + 8
 								current_spell = 5143
 								has_clearcasting = false
