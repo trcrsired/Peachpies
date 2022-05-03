@@ -139,9 +139,11 @@ local function cofunc(yd)
 							has_radiant_spark = true
 						end
 					end
-					start, duration, enabled, modRate = GetSpellCooldown(321507)	--touch of the magi
-					if duration == gcd_duration or duration == 0 then
-						burn_totm = true
+					if castspellId ~= 321507 then
+						start, duration, enabled, modRate = GetSpellCooldown(321507)	--touch of the magi
+						if duration == gcd_duration or duration == 0 then
+							burn_totm = true
+						end
 					end
 					if not has_rune_of_power and castspellId ~= 116011 then
 						start, duration, enabled, modRate = GetSpellCooldown(12042)	--arcane power
