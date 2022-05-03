@@ -139,10 +139,13 @@ local function cofunc(yd)
 							has_radiant_spark = true
 						end
 					end
-					if castspellId ~= 321507 then
+					if castspellId == 321507 then
+						charges = max_charges
+					else
 						start, duration, enabled, modRate = GetSpellCooldown(321507)	--touch of the magi
 						if duration == gcd_duration or duration == 0 then
 							burn_totm = true
+							charges = max_charges
 						end
 					end
 					if not has_rune_of_power and castspellId ~= 116011 then
