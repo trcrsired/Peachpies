@@ -236,7 +236,7 @@ local function cofunc(yd)
 					local skip_this_round = false
 					if casting_first_spell then
 						if castname then
-							if castendTimeMS < caststartTimeMS + 0.5 and castspellId == current_spell then
+							if castspellId == current_spell then
 								skip_this_round = true
 							end
 							casting_first_spell = false
