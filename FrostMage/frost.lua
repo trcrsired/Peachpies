@@ -72,9 +72,9 @@ local function cofunc(yd)
 					cooldowns[i]:SetCooldown(gcd_start, gcd_duration, gcd_enabled, gcd_modRate)
 					i = i + 1
 				end
-				if expiration_count then
-					if not fof_count or fof_count < expiration_count then
-						fof_count = expiration_count
+				if target_winterschillcharges_counts then
+					if not fof_count or fof_count < target_winterschillcharges_counts then
+						fof_count = target_winterschillcharges_counts
 					end
 				end
 				if fof_count then
