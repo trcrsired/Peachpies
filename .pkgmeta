@@ -17,3 +17,4 @@ externals:
 move-folders:
 	Peachpies/Options: Peachpies_Options
 	Peachpies/ArcaneMage: Peachpies_ArcaneMage
+	Peachpies/FrostMage: Peachpies_FrostMage
