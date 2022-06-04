@@ -13,8 +13,8 @@ local math_floor = math.floor
 
 local function cofunc(yd)
 	local m = 5
-	--Deathborne, icy veins, rune of power, mirror image, time wrap, summon water elemental
-	local monitor_spells = {324220,12472,116011,55342,80353}
+	--Frozen Orb, Deathborne, icy veins, rune of power, mirror image, time wrap, summon water elemental
+	local monitor_spells = {84714,324220,12472,116011,55342,80353}
 	local n = #monitor_spells + m
 
 	local specid,specname = GetSpecializationInfoByID(64)
@@ -34,18 +34,22 @@ local function cofunc(yd)
 			local player_self = UnitIsUnit("player","target")
 			if UnitAffectingCombat("player") or (not player_self and UnitIsVisible("target")) then
 				local gcd_start, gcd_duration, gcd_enabled, gcd_modRate = GetSpellCooldown(61304)
-
 				local realgcd_duration = 1.5/(1+GetHaste()/100)
-				local target_winterschillcharges_expiration_time
-				local gtime = GetTime()
+				local target_winterschillcharges_counts
 				for i=1,100 do
 					local name, icon, count, debuffType, duration, expirationTime, source, isStealable, 
 					nameplateShowPersonal, spellId = UnitAura("TARGET",i,"PLAYER")
 					if name == nil then
 						break
 					end
+					local gtime = GetTime()
 					if spellId == 228358 and gtime <= expirationTime then
-						target_winterschillcharges_expiration_time = expirationTime
+						local expiration_count = math_floor((expirationTime - gtime)/realgcd_duration)
+						target_winterschillcharges_counts = count
+						if expiration_count < count then
+							expiration_count = target_winterschillcharges_counts
+						end
+						break
 					end
 				end
 				local has_brain_freeze
@@ -68,10 +72,9 @@ local function cofunc(yd)
 					cooldowns[i]:SetCooldown(gcd_start, gcd_duration, gcd_enabled, gcd_modRate)
 					i = i + 1
 				end
-				if target_winterschillcharges_expiration_time then
-					local wc = math_floor((target_winterschillcharges_expiration_time - gtime)/realgcd_duration)
-					if not fof_count or fof_count < wc then
-						fof_count = wc
+				if expiration_count then
+					if not fof_count or fof_count < expiration_count then
+						fof_count = expiration_count
 					end
 				end
 				if fof_count then
