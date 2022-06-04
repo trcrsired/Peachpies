@@ -130,18 +130,24 @@ local function cofunc()
 end
 
 function Peachpies:OnEnable()
-	coroutine.wrap(cofunc)()
+	if #coroutines ~= 0 then
+		coroutine.wrap(cofunc)()
+	end
 end
+local IsItemInRange = IsItemInRange
+local CheckInteractDistance = CheckInteractDistance
+local UnitInRange = UnitInRange
 
 function Peachpies.unit_range(uId)
 	if IsItemInRange(90175, uId) then return 4
-	elseif IsItemInRange(37727, uId) then return 6
+	elseif IsItemInRange(16114, uId) then return 6
 	elseif IsItemInRange(8149, uId) then return 8
 	elseif CheckInteractDistance(uId, 3) then return 10
 	elseif CheckInteractDistance(uId, 2) then return 11
 	elseif IsItemInRange(32321, uId) then return 13
 	elseif IsItemInRange(6450, uId) then return 18
 	elseif IsItemInRange(21519, uId) then return 23
+	elseif IsItemInRange(13289, uId) then return 28
 	elseif CheckInteractDistance(uId, 1) then return 30
 	elseif IsItemInRange(1180, uId) then return 33
 	elseif UnitInRange(uId) then return 43

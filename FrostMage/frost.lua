@@ -4,18 +4,12 @@ local unit_range = Peachpies.unit_range
 local Peachpies_GridSpellMinitoring = Peachpies.GridSpellMinitoring
 local coyield = coroutine.yield
 local GetSpellTexture = GetSpellTexture
-local IsUsableSpell = IsUsableSpell
-local UnitPower = UnitPower
-local UnitPowerMax = UnitPowerMax
 local GetTime = GetTime
-local GetMasteryEffect = GetMasteryEffect
 local GetHaste = GetHaste
-local C_PvP_IsPVPMap = C_PvP.IsPVPMap
-local UnitCastingInfo = UnitCastingInfo
 local Peachpies_GridCenter = Peachpies.GridCenter
 local UnitAffectingCombat = UnitAffectingCombat
 local UnitIsVisible = UnitIsVisible
-local UnitIsEnemy = UnitIsEnemy
+local math_floor = math.floor
 
 local function cofunc(yd)
 	local m = 5
@@ -40,15 +34,18 @@ local function cofunc(yd)
 			local player_self = UnitIsUnit("player","target")
 			if UnitAffectingCombat("player") or (not player_self and UnitIsVisible("target")) then
 				local gcd_start, gcd_duration, gcd_enabled, gcd_modRate = GetSpellCooldown(61304)
-				local target_winterschillcharges
+
+				local realgcd_duration = 1.5/(1+GetHaste()/100)
+				local target_winterschillcharges_expiration_time
+				local gtime = GetTime()
 				for i=1,100 do
 					local name, icon, count, debuffType, duration, expirationTime, source, isStealable, 
 					nameplateShowPersonal, spellId = UnitAura("TARGET",i,"PLAYER")
 					if name == nil then
 						break
 					end
-					if spellId == 228358 then
-						target_winterschillcharges = count
+					if spellId == 228358 and gtime <= expirationTime then
+						target_winterschillcharges_expiration_time = expirationTime
 					end
 				end
 				local has_brain_freeze
@@ -71,6 +68,12 @@ local function cofunc(yd)
 					cooldowns[i]:SetCooldown(gcd_start, gcd_duration, gcd_enabled, gcd_modRate)
 					i = i + 1
 				end
+				if target_winterschillcharges_expiration_time then
+					local wc = math_floor((target_winterschillcharges_expiration_time - gtime)/realgcd_duration)
+					if not fof_count or fof_count < wc then
+						fof_count = wc
+					end
+				end
 				if fof_count then
 					while i<=4 and fof_count ~= 0 do
 						backgrounds[i]:SetTexture(GetSpellTexture(30455))
@@ -78,11 +81,6 @@ local function cofunc(yd)
 						i = i + 1
 						fof_count = fof_count - 1
 					end
-				end
-				if target_winterschillcharges then
-					backgrounds[i]:SetTexture(GetSpellTexture(30455))
-					cooldowns[i]:SetCooldown(gcd_start, gcd_duration, gcd_enabled, gcd_modRate)
-					i = i + 1				
 				end
 				local frostbolt_texture = GetSpellTexture(116)
 				while i <= 4 do
@@ -94,6 +92,10 @@ local function cofunc(yd)
 					local jmm1 = j+m-1
 					Peachpies_GridSpellMinitoring(grid_profile,
 					monitor_spells[j],backgrounds[jmm1],center_texts[jmm1],bottom_texts[jmm1],cooldowns[jmm1])
+				end
+				local t = unit_range("target")
+				if t then
+					Peachpies_GridCenter(grid_profile,t,10,43,center_text1,"%.0f")
 				end
 				globalframe:Show()
 			else
