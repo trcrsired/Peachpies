@@ -1,4 +1,4 @@
-## Interface: 90205
+## Interface: 100007
 ## Author: cqwrteur
 ## Title: Peachpies
 ## Version: @project-version@
