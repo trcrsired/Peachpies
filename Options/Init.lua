@@ -38,7 +38,16 @@ function Peachpies_Options.set_func(info,val)
 end
 
 function Peachpies_Options.get_func(info)
-	return Peachpies.db.profile[info[2]][info[1]][info[3]]
+	local profile = Peachpies.GetProfile(info[2])
+	local info1 = info[1]
+	local pinfo1 = profile[info1]
+	if pinfo1 == nil then
+		pinfo1 = {}
+		profile[info1] = pinfo1
+	end
+	local gridsdefault = Peachpies.modulesdefaultmetatable[info[1]]
+	setmetatable(pinfo1,gridsdefault)
+	return pinfo1[info[3]]
 end
 
 function Peachpies_Options.set_func_color(info,r,g,b,a)

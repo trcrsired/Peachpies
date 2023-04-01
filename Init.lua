@@ -45,6 +45,9 @@ end
 local coroutines = {}
 Peachpies.coroutines = coroutines
 
+local modulesdefaultmetatable = {}
+Peachpies.modulesdefaultmetatable = modulesdefaultmetatable
+
 function Peachpies.AddCoroutine(co)
 	coroutines[#coroutines+1]=co
 end

@@ -37,6 +37,8 @@ local default =
 }
 default.__index = default
 
+Peachpies.modulesdefaultmetatable.grids = default
+
 function Peachpies.CreateGrids(name,n,m)
 -- data driven design
 	local grids_meta = {}

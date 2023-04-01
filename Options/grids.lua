@@ -1,9 +1,16 @@
 local Peachpies_Options = LibStub("AceAddon-3.0"):GetAddon("Peachpies_Options")
 local LSM = LibStub("LibSharedMedia-3.0")
 
-local cvar_width,cvar_height = string.match(GetScreenResolutions(), "(%d+)x(%d+)")
-cvar_width = tonumber(cvar_width)
-cvar_height = tonumber(cvar_height)
+local cvar_width,cvar_height
+
+if GetCurrentScaledResolution then
+	cvar_width,cvar_height=GetCurrentScaledResolution()
+else
+	cvar_width,cvar_height = string.match(GetScreenResolutions(), "(%d+)x(%d+)")
+	cvar_width = tonumber(cvar_width)
+	cvar_height = tonumber(cvar_height)
+end
+
 local cvar_min = min(cvar_width,cvar_height)
 
 local set_func = Peachpies_Options.set_func
