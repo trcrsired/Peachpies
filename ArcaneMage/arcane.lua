@@ -20,8 +20,10 @@ local isretail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
 local function cofunc(yd)
 	local m = 5
 	local arcane_power_spellid = 12042
+	local arcane_power_buff_id = 12042
 	if isretail then
 		arcane_power_spellid = 365350 -- arcane power is arcane surge on retail
+		arcane_power_buff_id = 365362
 	end
 
 	--Arcane Power, Touch of the Magi,Radiant Spark , Rune of Power, Mirror, Timewrap in reverse order
@@ -82,7 +84,7 @@ local function cofunc(yd)
 					if spellId == 116014 then
 						has_rune_of_power = true
 					end
-					if spellId == arcane_power_spellid then
+					if spellId == arcane_power_buff_id then
 						has_arcane_power = true
 					end
 				end
@@ -120,7 +122,7 @@ local function cofunc(yd)
 				local casting_first_spell = true
 				local totm_casted = false
 				local i = 1
-				local has_rune_of_power_or_arcane_power = has_rune_of_power or has_arcane_surge or has_arcane_power
+				local has_rune_of_power_or_arcane_power = has_rune_of_power or has_arcane_power
 				local burn_phase = has_radiant_spark or has_rune_of_power_or_arcane_power
 				local castname, casttext, casttexture, caststartTimeMS, castendTimeMS, castisTradeSkill, castcastID, castnotInterruptible, castspellId = UnitCastingInfo("player")
 				if castspellId == 116011 or castspellId == 307443 or castspellId == 321507 or castspellId == arcane_power_spellid then
