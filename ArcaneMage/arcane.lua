@@ -4,7 +4,7 @@ local unit_range = Peachpies.unit_range
 local Peachpies_GridSpellMinitoring = Peachpies.GridSpellMinitoring
 local coyield = coroutine.yield
 local GetSpellTexture = GetSpellTexture
-local IsUsableSpell = IsUsableSpell
+local IsSpellKnown = IsSpellKnown
 local UnitPower = UnitPower
 local UnitPowerMax = UnitPowerMax
 local GetTime = GetTime
@@ -15,12 +15,17 @@ local UnitCastingInfo = UnitCastingInfo
 local Peachpies_GridCenter = Peachpies.GridCenter
 local UnitAffectingCombat = UnitAffectingCombat
 local UnitIsVisible = UnitIsVisible
-local UnitIsEnemy = UnitIsEnemy
+local isretail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
 
 local function cofunc(yd)
 	local m = 5
+	local arcane_power_spellid = 12042
+	if isretail then
+		arcane_power_spellid = 365350 -- arcane power is arcane surge on retail
+	end
+
 	--Arcane Power, Touch of the Magi,Radiant Spark , Rune of Power, Mirror, Timewrap in reverse order
-	local monitor_spells = {116011,307443,321507,12042,55342}
+	local monitor_spells = {arcane_power_spellid,321507,376103,116011,55342,80353}
 	local n = #monitor_spells + m
 
 	local specid,specname = GetSpecializationInfoByID(62)
@@ -60,7 +65,9 @@ local function cofunc(yd)
 				end
 				local has_clearcasting = false
 				local has_rune_of_power = false
-				local has_arcane_power = false
+				local has_arcane_power = false	-- arcane_power is arcane surge on dragonflight
+				local has_arcane_intellect = false
+				local has_arcane_familiar = false
 				for i=1,40 do
 					local name, icon, count, debuffType, duration, expirationTime, source, isStealable, 
 					nameplateShowPersonal, spellId = UnitAura("PLAYER",i,"PLAYER|HELPFUL")
@@ -76,8 +83,14 @@ local function cofunc(yd)
 					if spellId == 116014 then
 						has_rune_of_power = true
 					end
-					if spellId == 12042 then
+					if spellId == arcane_power_spellid then
 						has_arcane_power = true
+					end
+					if spellId == 1459 then
+						has_arcane_intellect = true
+					end
+					if spellId == 210126 then
+						has_arcane_familiar = true
 					end
 				end
 				if arcane_harmony_stacks == 0 then
@@ -114,10 +127,10 @@ local function cofunc(yd)
 				local casting_first_spell = true
 				local totm_casted = false
 				local i = 1
-				local has_rune_of_power_or_arcane_power = has_rune_of_power or has_arcane_power
+				local has_rune_of_power_or_arcane_power = has_rune_of_power or has_arcane_surge or has_arcane_power
 				local burn_phase = has_radiant_spark or has_rune_of_power_or_arcane_power
 				local castname, casttext, casttexture, caststartTimeMS, castendTimeMS, castisTradeSkill, castcastID, castnotInterruptible, castspellId = UnitCastingInfo("player")
-				if castspellId == 116011 or castspellId == 307443 or castspellId == 321507 or castspellId == 12042 then
+				if castspellId == 116011 or castspellId == 307443 or castspellId == 321507 or castspellId == arcane_power_spellid then
 					burn_phase = true
 				end
 				if burn_phase then
@@ -149,7 +162,7 @@ local function cofunc(yd)
 						end
 					end
 					if not has_rune_of_power and castspellId ~= 116011 then
-						start, duration, enabled, modRate = GetSpellCooldown(12042)	--arcane power
+						start, duration, enabled, modRate = GetSpellCooldown(arcane_power_spellid)	--arcane power
 						if duration == 0 then
 							burn_arcane_power = true
 						end
@@ -160,9 +173,19 @@ local function cofunc(yd)
 				while i <= 4 do
 					local current_spell = 44425
 					repeat
-						if percentage < chargemana then
+						if IsSpellKnown(1459) and not has_arcane_intellect then
+							current_spell = 1459
+							has_arcane_intellect = true
+							break
+						end
+						if IsSpellKnown(205022) and not has_arcane_familiar then
+							current_spell = 205022
+							has_arcane_familiar = true
+							break
+						end
+						if (not has_arcane_power or not isretail) and percentage < chargemana then
 							-- Evocation
-							if IsUsableSpell(12051) then
+							if IsSpellKnown(12051) then
 								local evocation_start,evocation_duration,evocation_enabled,evocation_modRate = GetSpellCooldown(12051)
 								if gcd_duration < evocation_duration or (evocation_duration <= gcd_duration and current_time + gcd_duration >= evocation_start + evocation_duration)  then
 									current_spell = 12051
@@ -185,13 +208,13 @@ local function cofunc(yd)
 								break
 							end
 							if burn_arcane_power then
-								current_spell = 12042
+								current_spell = arcane_power_spellid
 								burn_arcane_power = false
 								break
 							end
 							if charges < max_charges then
 								-- Arcane Orb
-								if IsUsableSpell(153626) then
+								if IsSpellKnown(153626) then
 									if not arcane_orb_casted then
 										local start, duration, enabled, modRate = GetSpellCooldown(153626)
 										if duration <= gcd_duration then
@@ -214,7 +237,7 @@ local function cofunc(yd)
 							end
 							if charges == 0 then
 								-- Touch of the Magi
-								if IsUsableSpell(321507) then
+								if IsSpellKnown(321507) then
 									if totm_casted then
 										local start, duration, enabled, modRate = GetSpellCooldown(321507)
 										if duration <= gcd_duration then
@@ -227,7 +250,7 @@ local function cofunc(yd)
 									end
 								end
 								-- Arcane Orb
-								if IsUsableSpell(153626) then
+								if IsSpellKnown(153626) then
 									if not arcane_orb_casted then
 										local start, duration, enabled, modRate = GetSpellCooldown(153626)
 										if duration <= gcd_duration then
