@@ -139,6 +139,12 @@ local function cofunc(yd)
 								has_rune_of_power = true
 							end
 						end
+						start, duration, enabled, modRate = GetSpellCooldown(arcane_power_spellid)	--rune of power
+						if duration ~= gcd_duration and duration ~= 0 then
+							if start + 1 < starttime then
+								has_arcane_power = true
+							end
+						end
 					end
 					if castspellId == 307443 then
 						has_radiant_spark = true
