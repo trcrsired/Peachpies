@@ -65,7 +65,7 @@ local function cofunc(yd)
 				local suggest_min_arcane_harmony_stacks = 12
 				if C_PvP_IsPVPMap() then
 					max_arcane_harmony_stacks = 10
-					suggest_min_arcane_harmony_stacks = 10
+					suggest_min_arcane_harmony_stacks = 6
 				end
 				local has_clearcasting = false
 				local has_rune_of_power = false
