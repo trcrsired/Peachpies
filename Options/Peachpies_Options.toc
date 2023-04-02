@@ -14,3 +14,5 @@ Libs\AceGUI-3.0-SharedMediaWidgets\widget.xml
 
 Init.lua
 grids.lua
+grid.lua
+bar.lua

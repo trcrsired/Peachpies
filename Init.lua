@@ -1,4 +1,16 @@
 local Peachpies = LibStub("AceAddon-3.0"):NewAddon("Peachpies","AceEvent-3.0","AceConsole-3.0")
+local cvar_width,cvar_height
+
+if GetCurrentScaledResolution then
+	cvar_width,cvar_height=GetCurrentScaledResolution()
+else
+	cvar_width,cvar_height = string.match(GetScreenResolutions(), "(%d+)x(%d+)")
+	cvar_width = tonumber(cvar_width)
+	cvar_height = tonumber(cvar_height)
+end
+Peachpies.cvar_width = cvar_width
+Peachpies.cvar_height = cvar_height
+Peachpies.cvar_min = min(cvar_width,cvar_height)
 
 function Peachpies:OnInitialize()
 	self.db = LibStub("AceDB-3.0"):New("PeachpiesDB",{},true)

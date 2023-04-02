@@ -1,9 +1,0 @@
-## Interface: 100007
-## Author: cqwrteur
-## Title: Peachpies Frost Mage
-## Version: @project-version@
-## LoadOnDemand: 1
-## X-PEACHPIES-CLASS: 8
-## X-PEACHPIES-SPEC: 3
-
-frost.lua

@@ -39,11 +39,12 @@ default.__index = default
 
 Peachpies.modulesdefaultmetatable.grids = default
 
-function Peachpies.CreateGrids(name,n,m)
+function Peachpies.CreateGrids(name,singleregions,aoeregions,buffregions)
 -- data driven design
 	local grids_meta = {}
-	grids_meta.n = n
-	grids_meta.m = m
+	grids_meta.singleregions = singleregions
+	grids_meta.aoeregions = aoeregions
+	grids_meta.buffregions = buffregions
 	Peachpies.grids[name] = grids_meta
 	local globalframe = CreateFrame("Frame",nil,UIParent)
 	globalframe:Hide()
@@ -61,35 +62,55 @@ function Peachpies.CreateGrids(name,n,m)
 	grids_meta.bottom_texts = bottom_text_tbls
 	local cd_tbls = {}
 	grids_meta.cooldowns = cd_tbls
+	local n = 0
+	local m
+	local p
+	if singleregions then
+		n = n + singleregions
+	end
+	if aoeregions then
+		p = n + 1
+		n = n + aoeregions
+	end
+	if buffregions then
+		m = n + 1
+		n = n + buffregions
+	end
+	grids_meta.singleregions = singleregions
+	grids_meta.aoeregions = aoeregions
+	grids_meta.buffregions = buffregions
+	grids_meta.n = n
 	for i=1,n do
 		local frme = CreateFrame("Frame",nil,globalframe)
-		if i==1 then
-			frme:SetPoint("BOTTOMLEFT",globalframe,"BOTTOMLEFT")
---			frme:SetPoint("TOPLEFT",globalframe,"TOPLEFT")
+		local point, relativeFrame, relativePoint
+		if i == 1 then
+			point = "BOTTOMLEFT"
+			relativeFrame = globalframe
+			relativePoint = point
+		elseif i == p then
+			point = "BOTTOMLEFT"
+			relativeFrame = frame_tbls[i-1]
+			relativePoint = "BOTTOMRIGHT"
+		elseif i == m then
+			point = "BOTTOMLEFT"
+			relativeFrame = frame_tbls[1]
+			relativePoint = "TOPLEFT"
 		else
-			local lastfrm = frame_tbls[i-1]
-			if i == m then
-				frme:SetPoint("BOTTOMLEFT",frame_tbls[1],"TOPLEFT")
-			else
-				frme:SetPoint("BOTTOMLEFT",lastfrm,"BOTTOMRIGHT")
-			end
---[[
-			if i == n then
-				frme:SetPoint("BOTTOMRIGHT",globalframe,"BOTTOMRIGHT")
-				frme:SetPoint("TOPRIGHT",globalframe,"TOPRIGHT")
-			end
-]]
+			point = "BOTTOMLEFT"
+			relativeFrame = frame_tbls[i-1]
+			relativePoint = "BOTTOMRIGHT"
 		end
+		frme:SetPoint(point,relativeFrame,relativePoint)
 		frame_tbls[i] = frme
 		local b =  frme : CreateTexture(nil, "BACKGROUND")
 		b:SetAllPoints(frme)
 		b:SetTexCoord(0.1,0.9,0.1,0.9)
 		background_tbls[i] = b
 		local ct = frme:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-		ct:SetPoint("Center", frme, "CENTER",0, 0)
+		ct:SetPoint("CENTER", frme, "CENTER",0, 0)
 		center_text_tbls[i] = ct
 		local btmt = frme:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-		btmt:SetPoint("Bottom", frme, "Bottom",0, 0)
+		btmt:SetPoint("BOTTOM", frme, "BOTTOM",0, 0)
 		bottom_text_tbls[i] = btmt
 		local cd = CreateFrame("Cooldown", nil, frme, "CooldownFrameTemplate")
 		cd:SetHideCountdownNumbers(true)
@@ -112,14 +133,29 @@ function Peachpies.GridsConfig(db,grids_meta)
 		local frame_tbls = grids_meta.frames
 		local center_text_tbls = grids_meta.center_texts
 		local bottom_text_tbls = grids_meta.bottom_texts
-		local n = #frame_tbls
-		local m = grids_meta.m
+		local singleregions = grids_meta.singleregions
+		local aoeregions = grids_meta.aoeregions
+		local buffregions = grids_meta.buffregions
+		local n = 0
+		local m
+		local p
+		if singleregions then
+			n = n + singleregions
+		end
+		if aoeregions then
+			p = n + 1
+			n = n + aoeregions
+		end
+		m = n + 1
+		if buffregions then
+			n = n + buffregions
+		end
 		for i=1,n do
 			local frame = frame_tbls[i]
 			local center_text = center_text_tbls[i]
 			local bottom_text = bottom_text_tbls[i]
 			local sz = size
-			if i == 1 or i >= m then
+			if i == 1 or i == p or i >= m then
 				sz = sz*2
 			end
 			frame:SetSize(sz,sz)
@@ -150,8 +186,10 @@ function Peachpies.GridCenter(tb,count,L,M,center_text,format)
 	end
 end
 
+local is_spell_known = Peachpies.is_spell_known
+
 function Peachpies.GridSpellMinitoring(tb,spellid,background,center_text,bottom_text,cooldown)
-	if IsUsableSpell(spellid) then
+	if is_spell_known(spellid) then
 		background:SetTexture(GetSpellTexture(spellid))
 		local ap_start, ap_duration, ap_enabled, ap_modRate  = GetSpellCooldown(spellid)
 		local gcd_start, gcd_duration, gcd_enabled, gcd_modRate = GetSpellCooldown(61304)
@@ -167,5 +205,36 @@ function Peachpies.GridSpellMinitoring(tb,spellid,background,center_text,bottom_
 			center_text:Hide()
 		end
 		return true
+	end
+end
+
+function Peachpies.GridsSpellMonitoring(grid_profile,grids_meta,monitoredspells)
+	local buffregions = grids_meta.buffregions
+	if buffregions == nil then
+		return
+	end
+	local framestbl = grids_meta.frames
+	local backgrounds = grids_meta.backgrounds
+	local center_texts = grids_meta.center_texts
+	local bottom_texts = grids_meta.bottom_texts
+	local cooldowns = grids_meta.cooldowns
+	local spellmon = Peachpies.GridSpellMinitoring
+	local n = grids_meta.n
+	local diff = n - buffregions
+	local monitoredspellsn = #monitoredspells
+	for j = 1,buffregions do
+		local jmm1 = j+diff
+		local framejmm1 = framestbl[jmm1]
+		if j > monitoredspellsn then
+			framejmm1:Hide()
+		else
+			if spellmon(grid_profile,monitoredspells[j],backgrounds[jmm1],
+			center_texts[jmm1],bottom_texts[jmm1],cooldowns[jmm1]) then
+				framejmm1:Show()
+			else
+				framejmm1:Hide()
+			end
+		end
+
 	end
 end
