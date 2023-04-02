@@ -61,9 +61,11 @@ local function cofunc(yd)
 				local haste_effect = 1 + GetHaste()/100
 				local real_gcd_val = 1.5 / haste_effect
 				local arcane_harmony_stacks = 0
-				local max_arcane_harmony_stacks = 18
+				local max_arcane_harmony_stacks = 20
+				local suggest_min_arcane_harmony_stacks = 12
 				if C_PvP_IsPVPMap() then
 					max_arcane_harmony_stacks = 10
+					suggest_min_arcane_harmony_stacks = 10
 				end
 				local has_clearcasting = false
 				local has_rune_of_power = false
@@ -75,7 +77,7 @@ local function cofunc(yd)
 					if name == nil then
 						break
 					end
-					if spellId == 332777 then	--arcane harmony
+					if spellId == 384455 then	--arcane harmony
 						arcane_harmony_stacks = count
 					end
 					if spellId == 263725 then
@@ -91,7 +93,7 @@ local function cofunc(yd)
 				if arcane_harmony_stacks == 0 then
 					bottom_text1:Hide()
 				else
-					Peachpies_GridCenter(grid_profile,arcane_harmony_stacks,12,18,bottom_text1)
+					Peachpies_GridCenter(grid_profile,arcane_harmony_stacks,suggest_min_arcane_harmony_stacks,max_arcane_harmony_stacks,bottom_text1)
 					bottom_text1:Show()
 				end
 				local has_radiant_spark
