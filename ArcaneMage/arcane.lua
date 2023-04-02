@@ -66,8 +66,7 @@ local function cofunc(yd)
 				local has_clearcasting = false
 				local has_rune_of_power = false
 				local has_arcane_power = false	-- arcane_power is arcane surge on dragonflight
-				local has_arcane_intellect = false
-				local has_arcane_familiar = false
+
 				for i=1,40 do
 					local name, icon, count, debuffType, duration, expirationTime, source, isStealable, 
 					nameplateShowPersonal, spellId = UnitAura("PLAYER",i,"PLAYER|HELPFUL")
@@ -85,12 +84,6 @@ local function cofunc(yd)
 					end
 					if spellId == arcane_power_spellid then
 						has_arcane_power = true
-					end
-					if spellId == 1459 then
-						has_arcane_intellect = true
-					end
-					if spellId == 210126 then
-						has_arcane_familiar = true
 					end
 				end
 				if arcane_harmony_stacks == 0 then
@@ -173,16 +166,6 @@ local function cofunc(yd)
 				while i <= 4 do
 					local current_spell = 44425
 					repeat
-						if IsSpellKnown(1459) and not has_arcane_intellect then
-							current_spell = 1459
-							has_arcane_intellect = true
-							break
-						end
-						if IsSpellKnown(205022) and not has_arcane_familiar then
-							current_spell = 205022
-							has_arcane_familiar = true
-							break
-						end
 						if (not has_arcane_power or not isretail) and percentage < chargemana then
 							-- Evocation
 							if IsSpellKnown(12051) then
