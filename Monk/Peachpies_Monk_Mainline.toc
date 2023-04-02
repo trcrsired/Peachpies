@@ -2,7 +2,7 @@
 ## Author: cqwrteur
 ## Title: Peachpies Monk
 ## LoadOnDemand: 1
-## X-PEACHPIES-CLASS: 8
+## X-PEACHPIES-CLASS: 10
 
 Monk_DF/Monk.xml
 
