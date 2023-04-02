@@ -74,23 +74,28 @@ local function cofunc()
 	Peachpies:RegisterEvent("PLAYER_TALENT_UPDATE",resume,0)
 	Peachpies:RegisterMessage("Peachpies_OnProfileChanged",resume,0)
 	local UnitIsUnit = UnitIsUnit
-	local function functionresume(tag,_,unit)
+	local function functionresume(tag,s,unit,...)
 		if unit == "player" or UnitIsUnit(unit,"player") then
-			coresume(current,tag)
+			coresume(current,tag,s,unit,...)
 		end
 	end
 	local runnings = {}
-	local yd = 0
-	local fullyrunning
+	local yd,p1,p2,p3,p4,p5,p6,p7 = 0
+	local running_level
 	while true do
 		if yd == 0 then
-			fullyrunning = nil
+			running_level = nil
 			for i=1,#coroutines do
 				local status,yval = coresume(coroutines[i],0)
 				if status then
 					if yval then
-						fullyrunning = true
-						runnings[i] = true
+						if running_level == nil then
+							running_level = 0
+						end
+						if running_level < yval then
+							running_level = yval
+						end
+						runnings[i] = yval
 					else
 						runnings[i] = false
 					end
@@ -98,13 +103,23 @@ local function cofunc()
 					Peachpies:Print(status,yval)
 				end
 			end
-			if fullyrunning then
-				Peachpies:RegisterEvent("ACTIONBAR_UPDATE_STATE",resume,2)
-				Peachpies:RegisterEvent("ACTIONBAR_UPDATE_USABLE",resume,2)
-				Peachpies:RegisterEvent("SPELL_UPDATE_CHARGES",resume,2)
-				Peachpies:RegisterEvent("PLAYER_TARGET_CHANGED",resume,2)
-				Peachpies:RegisterEvent("UNIT_SPELLCAST_SENT",functionresume,3)
-				Peachpies:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED",functionresume,3)
+			if running_level then
+				if 1 < running_level then
+					Peachpies:RegisterEvent("ACTIONBAR_UPDATE_STATE",resume,2)
+					Peachpies:RegisterEvent("ACTIONBAR_UPDATE_USABLE",resume,2)
+					Peachpies:RegisterEvent("SPELL_UPDATE_CHARGES",resume,2)
+					Peachpies:RegisterEvent("PLAYER_TARGET_CHANGED",resume,2)
+				end
+				if 2 < running_level then
+					Peachpies:RegisterEvent("UNIT_SPELLCAST_SENT",functionresume,3)
+					Peachpies:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED",functionresume,3)
+				end
+				if 3 < running_level then
+					Peachpies:RegisterEvent("UNIT_HEALTH",resume,4)
+				end
+				if 4 < running_level then
+					Peachpies:RegisterEvent("UNIT_AURA",resume,5)
+				end
 				if ticker == nil then
 					ticker = C_Timer.NewTicker(0.05,function()
 						coroutine.resume(current,1)
@@ -117,18 +132,28 @@ local function cofunc()
 				Peachpies:UnregisterEvent("PLAYER_TARGET_CHANGED")
 				Peachpies:UnregisterEvent("UNIT_SPELLCAST_SENT")
 				Peachpies:UnregisterEvent("UNIT_SPELLCAST_SUCCEEDED")
+				Peachpies:UnregisterEvent("UNIT_HEALTH")
+				Peachpies:UnregisterEvent("UNIT_AURA")
 				if ticker then
 					ticker:Cancel()
 					ticker = nil
 				end
 			end
+			yd = 1
 		end
-		for i=1,#coroutines do
-			if runnings[i] then
-				coresume(coroutines[i],2)
+		if running_level then
+			for i=1,#coroutines do
+				local running_val = runnings[i]
+				if running_val and yd <= running_val then
+					local status,yval = coresume(coroutines[i],yd,p1,p2,p3,p4,p5,p6,p7)
+					if not status then
+						Peachpies:Print(status,i,yval)
+						runnings[i]=false
+					end
+				end
 			end
 		end
-		yd = coyield()
+		yd,p1,p2,p3,p4,p5,p6,p7 = coyield()
 	end
 end
 
@@ -159,4 +184,26 @@ function Peachpies.unit_range(uId)
 	elseif IsItemInRange(32825, uId) then return 60
 	elseif IsItemInRange(35278, uId) then return 80
 	end
+end
+
+if WOW_PROJECT_MAINLINE == WOW_PROJECT_MAINLINE then
+
+local C_PvP_IsPVPMap = C_PvP.IsPVPMap
+
+function Peachpies.player_in_pvp()
+	return C_PvP_IsPVPMap()
+end
+
+else
+
+Peachpies.player_in_pvp = nop
+
+end
+
+if IsSpellKnown then
+Peachpies.is_spell_known = IsSpellKnown
+elseif IsUsableSpell then
+Peachpies.is_spell_known = IsUsableSpell
+else
+Peachpies.is_spell_known = function() return true end
 end

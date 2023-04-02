@@ -1,7 +1,9 @@
 ## Interface: 100007
 ## Author: cqwrteur
-## Title: Peachpies Mage
+## Title: Peachpies Monk
 ## LoadOnDemand: 1
 ## X-PEACHPIES-CLASS: 8
 
-Mage_DF/mage.lua
+Monk_DF/Monk.xml
+
+# transcendence.lua
