@@ -101,21 +101,3 @@ function Peachpies.GridConfig(t,frame,background,center_text,bottom_text,cd,secu
 	bottom_text:SetFont(LSM:HashTable("font")[tb.BottomTextFont], tb.BottomTextSize, "OUTLINE")
 	return tb
 end
-
-function Peachpies.GridCenter(tb,count,L,M,center_text,format)
-	if tb == nil then
-		return
-	end
-	if count < L then
-		center_text:SetTextColor(tb.HighColorR,tb.HighColorG,tb.HighColorB,tb.HighColorA)
-	elseif count < M then
-		center_text:SetTextColor(tb.MidColorR,tb.MidColorG,tb.MidColorB,tb.MidColorA)
-	else
-		center_text:SetTextColor(tb.LowColorR,tb.LowColorG,tb.LowColorB,tb.LowColorA)
-	end
-	if format then
-		center_text:SetFormattedText(format,count)
-	else
-		center_text:SetText(count)
-	end
-end
