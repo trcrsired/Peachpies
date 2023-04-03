@@ -95,7 +95,13 @@ function Peachpies_Options.GenerateB(key,name,b)
 			desc_str = L.default_desc_str
 		else
 			local nameinfo = v.nameinfo
+			local spellid = nameinfo.spellid
 			name_str = nameinfo.name
+			if name_str == nil and spellid then
+				name_str = GetSpellInfo(spellid)
+			elseif nameinfo.name_use_acelocale3 then
+				name_str = L[desc_str]
+			end
 			desc_str = nameinfo.desc
 			if nameinfo.desc_use_acelocale3 then
 				desc_str = L[desc_str]
