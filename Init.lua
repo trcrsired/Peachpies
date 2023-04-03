@@ -259,3 +259,14 @@ local function is_spell_known_not_cooldown(spellid)
 end
 
 Peachpies.is_spell_known_not_cooldown = is_spell_known_not_cooldown
+
+function Peachpies.monitor_spells_maximum(tb)
+	local maximum_count = 0
+	for i=1,#tb do
+		local tbi = tb[i]
+		if maximum_count < #tbi then
+			maximum_count = #tbi
+		end
+	end
+	return maximum_count,tb
+end

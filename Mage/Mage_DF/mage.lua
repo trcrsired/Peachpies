@@ -22,26 +22,35 @@ local CheckInteractDistance = CheckInteractDistance
 local C_NamePlate_GetNamePlates = C_NamePlate.GetNamePlates
 local math_floor = math.floor
 
-local arcane_power_spellid = 365350
---local arcane_power_buff_id = 365362
+local monitored_spells =
+{
+--Arcane
+{
+376103,
+12051,
+365350,
+321507,
+116011,
+382440,
+55342,
+80353
+},
+--Fire
+{
+80353
+},
+--Frost
+{
+84714,
+382440,
+12472,
+116011,
+55342,
+80353
+}
+}
 
---Arcane: Arcane Power, Touch of the Magi,Radiant Spark , Rune of Power, Mirror, Timewrap
-
-local arcane_monitor_spells = {376103,12051,arcane_power_spellid,321507,116011,382440,55342,80353}
-
---Frost: Frozen Orb, Deathborne, icy veins, rune of power, mirror image, summon water elemental, time wrap
-local frost_monitor_spells = {84714,382440,12472,116011,55342,80353}
-
---Fire to do
-local fire_monitor_spells = {80353}
-
-local to_monitors_buffs = #arcane_monitor_spells
-if to_monitors_buffs < #frost_monitor_spells then
-	to_monitors_buffs = #frost_monitor_spells
-end
-if to_monitors_buffs < #fire_monitor_spells then
-	to_monitors_buffs = #fire_monitor_spells
-end
+local to_monitored_buffs = Peachpies.monitor_spells_maximum(monitored_spells)
 
 local is_spell_known_not_cooldown = Peachpies.is_spell_known_not_cooldown
 
@@ -49,7 +58,7 @@ local function cofunc(yd)
 	local monitor_spells
 	local single_target_grids_count = 5
 	local aoe_grids_count = 5
-	local grids_meta = Peachpies.CreateGrids(nil,single_target_grids_count,aoe_grids_count,to_monitors_buffs)
+	local grids_meta = Peachpies.CreateGrids(nil,single_target_grids_count,aoe_grids_count,to_monitored_buffs)
 	local globalframe = grids_meta.globalframe
 	local backgrounds = grids_meta.backgrounds
 	local center_texts = grids_meta.center_texts
@@ -66,11 +75,7 @@ local function cofunc(yd)
 		if yd == 0 then
 			specialization = GetSpecialization()
 			if specialization ~= 2 then
-				if specialization == 1 then
-					monitor_spells = arcane_monitor_spells
-				elseif specialization == 3 then
-					monitor_spells = frost_monitor_spells
-				end
+				monitor_spells = monitored_spells[specialization]
 				grids_profile = Peachpies.GridsConfig(Peachpies.GetProfile(),grids_meta)
 				if grids_profile.Enable then
 					yd=coyield(2)
