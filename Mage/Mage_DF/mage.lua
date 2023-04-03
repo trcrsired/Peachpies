@@ -132,6 +132,7 @@ local function cofunc(yd)
 					end
 					if spellId == 376104 then
 						radiant_spark_vulnerability_counts = count
+						in_radiant_spark = true
 					elseif spellId == 114923 then
 						has_nether_tempest = true
 					end
@@ -152,6 +153,9 @@ local function cofunc(yd)
 				local arcane_missile_usable = is_spell_known(44425)
 				if not arcane_missile_usable then
 					has_clearcasting = false
+				end
+				if is_spell_known_not_cooldown(376103) == false then
+					in_radiant_spark = true
 				end
 				local in_touch_of_the_magi = in_radiant_spark and is_spell_known_not_cooldown(321507)
 				for i=1,5 do
