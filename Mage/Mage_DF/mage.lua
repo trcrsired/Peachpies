@@ -25,7 +25,7 @@ local arcane_power_spellid = 365350
 
 --Arcane: Arcane Power, Touch of the Magi,Radiant Spark , Rune of Power, Mirror, Timewrap
 
-local arcane_monitor_spells = {arcane_power_spellid,321507,376103,116011,55342,80353}
+local arcane_monitor_spells = {arcane_power_spellid,321507,376103,116011,382440,55342,80353}
 
 --Frost: Frozen Orb, Deathborne, icy veins, rune of power, mirror image, summon water elemental, time wrap
 local ice_monitor_spells = {84714,324220,12472,116011,55342,80353}
