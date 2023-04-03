@@ -154,10 +154,11 @@ local function cofunc(yd)
 				if not arcane_missile_usable then
 					has_clearcasting = false
 				end
+				local in_touch_of_the_magi = in_radiant_spark
 				if is_spell_known_not_cooldown(376103) == false then
-					in_radiant_spark = true
+					in_touch_of_the_magi = true
 				end
-				local in_touch_of_the_magi = in_radiant_spark and is_spell_known_not_cooldown(321507)
+				in_touch_of_the_magi = in_touch_of_the_magi and is_spell_known_not_cooldown(321507)
 				for i=1,5 do
 					local thisroundspell = 30451
 					if in_radiant_spark then
