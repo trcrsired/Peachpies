@@ -13,10 +13,18 @@ Peachpies.cvar_height = cvar_height
 Peachpies.cvar_min = min(cvar_width,cvar_height)
 
 function Peachpies:OnInitialize()
+	local LibStub = LibStub
 	self.db = LibStub("AceDB-3.0"):New("PeachpiesDB",{},true)
+	local LibDualSpec = LibStub('LibDualSpec-1.0',true)
+	if LibDualSpec then
+		LibDualSpec:EnhanceDatabase(self.db, "CRaidFrame")
+	end
 	self:RegisterChatCommand("Peachpies", "ChatCommand")
 	local _,_,classId = UnitClass("player")
 	local classidstr = tostring(classId)
+	local GetAddOnMetadata = GetAddOnMetadata
+	local gmatch = gmatch
+	local LoadAddOn = LoadAddOn
 	for i = 1, GetNumAddOns() do
 		if GetAddOnMetadata(i,"X-Peachpies-CLASS") == classidstr then
 			LoadAddOn(i)
@@ -65,6 +73,9 @@ function Peachpies.AddCoroutine(co)
 end
 
 function Peachpies.GetProfile(key)
+	if key == nil then
+		key = "default"
+	end
 	local profile = Peachpies.db.profile
 	local t = profile[key]
 	if t == nil then
@@ -72,6 +83,16 @@ function Peachpies.GetProfile(key)
 		profile[key] = t
 	end
 	return t
+end
+
+function Peachpies.AddComponentNameinfo(key,component_meta,nameinfo)
+	local component = Peachpies[key]
+	if nameinfo then
+		component_meta.nameinfo = nameinfo
+		component[nameinfo.key] = component_meta
+	else
+		component.default = component_meta
+	end
 end
 
 local function cofunc()

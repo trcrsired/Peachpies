@@ -42,34 +42,40 @@ default.__index = default
 
 Peachpies.modulesdefaultmetatable.bar = default
 
-function Peachpies.CreateBar(name,co)
-	local t =Peachpies.bar
-	t[name] = co
+function Peachpies.CreateBar(nameinfo)
+	local bar_meta = {}
+	Peachpies.AddComponentNameinfo("bar",bar_meta,nameinfo)
 	local frme = CreateFrame("Frame",nil,UIParent)
+	bar_meta.globalframe = frme
 	frme:Hide()
 	frme:SetFrameStrata("MEDIUM")
 	frme:SetClampedToScreen(true)
 	frme:SetPoint("CENTER", UIParent, "CENTER",0,0)
 	local b =  frme : CreateTexture(nil, "BACKGROUND")
 	b:SetAllPoints(frme)
+	bar_meta.background = b
 	local br =  CreateFrame("StatusBar",nil,frme)
 	br:SetFrameLevel(br:GetFrameLevel()-1)
 	br:SetMinMaxValues(0,1)
 	br:SetAllPoints(frme)
+	bar_meta.status_bar = br
 	local per = frme:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
 	per:SetPoint("RIGHT", frme, "RIGHT",0, 0)
+	bar_meta.percentage_text = per
 	local amt = frme:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
 	amt:SetPoint("RIGHT", frme, "CENTER",0, 0)
-	return frme,b,br,per,amt
+	bar_meta.amount_text = amt
+	return bar_meta
 end
 
-function Peachpies.BarConfig(t,frame,background,statusbar,percentage,amount)
+function Peachpies.BarConfig(t,bar_meta)
 	local tb = t.bar
 	if tb == nil then
 		tb = {}
 		t.bar = tb
 	end
 	setmetatable(tb,default)
+	local frame = bar_meta.globalframe
 	if tb.Enable then
 		frame:Show()
 	else
@@ -88,18 +94,19 @@ function Peachpies.BarConfig(t,frame,background,statusbar,percentage,amount)
 	frame:EnableMouse(not tb.Lock)
 	frame:SetSize(tb.Width,tb.Height)
 	frame:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT",tb.Left,tb.Bottom)
-	statusbar:SetStatusBarTexture(LSM:HashTable("statusbar")[tb.StatusBar])
-	background:SetTexture(LSM:HashTable("background")[tb.Background])
-	percentage:SetFont(LSM:HashTable("font")[tb.PercentageFont],tb.PercentageFontSize, "OUTLINE")
-	amount:SetFont(LSM:HashTable("font")[tb.AmountFont],tb.AmountFontSize, "OUTLINE")
+	bar_meta.status_bar:SetStatusBarTexture(LSM:HashTable("statusbar")[tb.StatusBar])
+	bar_meta.background:SetTexture(LSM:HashTable("background")[tb.Background])
+	bar_meta.percentage_text:SetFont(LSM:HashTable("font")[tb.PercentageFont],tb.PercentageFontSize, "OUTLINE")
+	bar_meta.amount_text:SetFont(LSM:HashTable("font")[tb.AmountFont],tb.AmountFontSize, "OUTLINE")
 	return tb
 end
 
-function Peachpies.BarSet(tb,current,max,statusbar,percentage,amount)
-	local percent = current/max
+function Peachpies.BarSet(tb,current,maxval,bar_meta)
+	local percent = current/maxval
+	bar_meta.percentage_text:SetText(("%.0f%%"):format(100*percent))
+	bar_meta.amount_text:SetText(("%.0f"):format(current))
+	local statusbar = bar_meta.status_bar
 	statusbar:SetValue(percent)
-	percentage:SetText(("%.0f%%"):format(100*percent))
-	amount:SetText(("%.0f"):format(current))
 	if percent< tb.Low then
 		statusbar:SetStatusBarColor(tb.LowColorR,tb.LowColorG,tb.LowColorB,tb.LowColorA)
 	elseif percent < tb.High then

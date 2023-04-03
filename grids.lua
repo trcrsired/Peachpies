@@ -39,13 +39,13 @@ default.__index = default
 
 Peachpies.modulesdefaultmetatable.grids = default
 
-function Peachpies.CreateGrids(name,singleregions,aoeregions,buffregions)
+function Peachpies.CreateGrids(nameinfo,singleregions,aoeregions,buffregions)
 -- data driven design
 	local grids_meta = {}
 	grids_meta.singleregions = singleregions
 	grids_meta.aoeregions = aoeregions
 	grids_meta.buffregions = buffregions
-	Peachpies.grids[name] = grids_meta
+	Peachpies.AddComponentNameinfo("grids",grids_meta,nameinfo)
 	local globalframe = CreateFrame("Frame",nil,UIParent)
 	globalframe:Hide()
 --	globalframe:SetFrameStrata("MEDIUM")
@@ -248,7 +248,7 @@ function Peachpies.GridsQueueSpells(castingspellid,castendTimeMS,castingqueue,ba
 	local starti = 1
 	if castingqueue1 == castingspellid then
 		local gtmms = GetTime()*1000
-		if castendTimeMS < gtmms + 500 then
+		if castendTimeMS < gtmms + 800 then
 			starti = 2
 		end
 	end

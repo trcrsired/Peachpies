@@ -39,41 +39,50 @@ default.__index = default
 
 Peachpies.modulesdefaultmetatable.grid = default
 
-function Peachpies.CreateGrid(name,co,secure)
-	local t =Peachpies.grid
-	t[name] = co
+function Peachpies.CreateGrid(nameinfo,secure)
+	local grid_meta = {}
+	Peachpies.AddComponentNameinfo("grid",grid_meta,nameinfo)
 	local secure_frame = CreateFrame("Frame",nil,UIParent)
-	local actionbutton,hider
+	grid_meta.globalframe = secure_frame
+	grid_meta.secure = secure
 	if secure then
-		actionbutton = CreateFrame("CheckButton",nil,secure_frame,"SecureActionButtonTemplate")
+		local actionbutton = CreateFrame("CheckButton",nil,secure_frame,"SecureActionButtonTemplate")
 		actionbutton:SetAttribute("type","spell")
 		actionbutton:SetAttribute("spell",secure)
 		actionbutton:SetMouseClickEnabled(true)
 		actionbutton:RegisterForClicks("LeftButtonUp", "LeftButtonDown")
 		actionbutton:SetAllPoints(secure_frame)
 		actionbutton:SetFrameStrata("BACKGROUND")
-		hider = CreateFrame("Button",nil,secure_frame)
+		grid_meta.actionbutton = actionbutton
+		local hider = CreateFrame("Button",nil,secure_frame)
 		hider:SetFrameStrata("LOW")
 		hider:SetAllPoints(secure_frame)
+		grid_meta.actionbutton_hider = hider
 	end
 	local frme = CreateFrame("Frame",nil,secure_frame)
+	grid_meta.frame = frme
 	frme:Hide()
 	frme:SetFrameStrata("MEDIUM")
 	frme:SetClampedToScreen(true)
 	frme:SetAllPoints(secure_frame)
 	local b =  frme : CreateTexture(nil, "BACKGROUND")
+	grid_meta.background = b
 	b:SetAllPoints(frme)
 	b:SetTexCoord(0.1,0.9,0.1,0.9)	
 	local ct = frme:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+	grid_meta.center_text = ct
 	ct:SetPoint("Center", frme, "CENTER",0, 0)
 	local btmt = frme:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
 	btmt:SetPoint("Bottom", frme, "Bottom",0, 0)
+	grid_meta.buttom_text = btmt
 	local cd = CreateFrame("Cooldown", nil, frme, "CooldownFrameTemplate")
 	cd:SetHideCountdownNumbers(true)
-	return frme,b,ct,btmt,cd,secure_frame,actionbutton,hider
+	grid_meta.cooldown = cd
+	return grid_meta
 end
 
-function Peachpies.GridConfig(t,frame,background,center_text,bottom_text,cd,secure_frame)
+function Peachpies.GridConfig(t,grid_meta)
+	local secure_frame = t.globalframe
 	if secure_frame:IsForbidden() then return end
 	local tb = t.grid
 	if tb == nil then
@@ -97,7 +106,7 @@ function Peachpies.GridConfig(t,frame,background,center_text,bottom_text,cd,secu
 	secure_frame:EnableMouse(not tb.Lock)
 	secure_frame:SetSize(tb.Size,tb.Size)
 	secure_frame:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT",tb.Left,tb.Bottom)
-	center_text:SetFont(LSM:HashTable("font")[tb.CenterTextFont], tb.CenterTextSize, "OUTLINE")
-	bottom_text:SetFont(LSM:HashTable("font")[tb.BottomTextFont], tb.BottomTextSize, "OUTLINE")
+	grid_meta.center_text:SetFont(LSM:HashTable("font")[tb.CenterTextFont], tb.CenterTextSize, "OUTLINE")
+	grid_meta.bottom_text:SetFont(LSM:HashTable("font")[tb.BottomTextFont], tb.BottomTextSize, "OUTLINE")
 	return tb
 end

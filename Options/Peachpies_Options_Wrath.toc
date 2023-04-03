@@ -12,6 +12,7 @@ Libs\AceLocale-3.0\AceLocale-3.0.xml
 Libs\AceGUI-3.0-SharedMediaWidgets\widget.xml
 #@end-no-lib-strip@
 
+locale\locale.xml
 Init.lua
 grids.lua
 grid.lua

@@ -1,6 +1,8 @@
+local LibStub = LibStub
 local AceAddon = LibStub("AceAddon-3.0")
 local Peachpies = AceAddon:GetAddon("Peachpies")
 local Peachpies_Options = AceAddon:NewAddon("Peachpies_Options","AceEvent-3.0")
+local L = LibStub("AceLocale-3.0"):GetLocale("Peachpies")
 Peachpies_Options.options = {
 	type = "group",
 	name = "Peachpies",
@@ -78,10 +80,31 @@ end
 
 function Peachpies_Options.GenerateB(key,name,b)
 	local gm = {}
-	for k,v in pairs(Peachpies[key]) do
-		gm[k] = 
+
+	local pkey = Peachpies[key]
+
+	if next(pkey) == nil then
+		return
+	end
+
+	for k,v in pairs(pkey) do
+		local name_str
+		local desc_str
+		if k == "default" then
+			name_str = DAMAGER
+			desc_str = L.default_desc_str
+		else
+			local nameinfo = v.nameinfo
+			name_str = nameinfo.name
+			desc_str = nameinfo.desc
+			if nameinfo.desc_use_acelocale3 then
+				desc_str = L[desc_str]
+			end
+		end
+		gm[k] =
 		{
-			name = k,
+			name = name_str,
+			desc = desc_str,
 			type = "group",
 			args = b
 		}

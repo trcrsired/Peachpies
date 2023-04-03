@@ -51,7 +51,7 @@ local is_spell_known_not_cooldown = Peachpies.is_spell_known_not_cooldown
 local function cofunc(yd)
 	local monitor_spells
 
-	local grids_meta = Peachpies.CreateGrids("default",5,5,to_monitors_buffs)
+	local grids_meta = Peachpies.CreateGrids(nil,5,5,to_monitors_buffs)
 	local globalframe = grids_meta.globalframe
 	local backgrounds = grids_meta.backgrounds
 	local center_texts = grids_meta.center_texts
@@ -69,7 +69,7 @@ local function cofunc(yd)
 			specialization = GetSpecialization()
 			if specialization == 1 then
 				monitor_spells = arcane_monitor_spells
-				grid_profile = Peachpies.GridsConfig(Peachpies.GetProfile("default"),grids_meta)
+				grid_profile = Peachpies.GridsConfig(Peachpies.GetProfile(),grids_meta)
 				if grid_profile.Enable then
 					yd=coyield(2)
 				else
