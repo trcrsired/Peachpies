@@ -11,6 +11,7 @@ local GetHaste = GetHaste
 local player_in_pvp = Peachpies.player_in_pvp
 local UnitCastingInfo = UnitCastingInfo
 local Peachpies_GridCenter = Peachpies.GridCenter
+local UnitIsUnit = UnitIsUnit
 local UnitAffectingCombat = UnitAffectingCombat
 local UnitIsVisible = UnitIsVisible
 local GetSpellCooldown = GetSpellCooldown
