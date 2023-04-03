@@ -305,14 +305,14 @@ local function cofunc(yd)
 				end
 				for i=1,aoe_grids_count do
 					local thisroundspell = 1449
-					if not has_nether_tempest and nether_tempest_usable then
-						thisroundspell = 114923
-						has_nether_tempest = true
-					elseif max_charges == aoe_charges and arcane_barrage_usable then
+					if max_charges == aoe_charges and arcane_barrage_usable then
 						thisroundspell = 44425
 					elseif orb_usable then
 						thisroundspell = orb_usable
 						orb_usable = nil
+					elseif not has_nether_tempest and nether_tempest_usable then
+						thisroundspell = 114923
+						has_nether_tempest = true
 					elseif blizzard_usable then
 						thisroundspell = 190356
 						blizzard_usable = false
