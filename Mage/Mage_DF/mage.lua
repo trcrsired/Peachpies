@@ -43,8 +43,6 @@ if to_monitors_buffs < #fire_monitor_spells then
 	to_monitors_buffs = #fire_monitor_spells
 end
 
-local evocation_start,evocation_duration,evocation_enabled,evocation_modRate = GetSpellCooldown(12051)
-
 local is_spell_known_not_cooldown = Peachpies.is_spell_known_not_cooldown
 
 local function cofunc(yd)
@@ -57,7 +55,7 @@ local function cofunc(yd)
 	local center_texts = grids_meta.center_texts
 	local bottom_texts = grids_meta.bottom_texts
 	local cooldowns = grids_meta.cooldowns
-	local grid_profile
+	local grids_profile
 	local center_text1 = center_texts[1]
 	local bottom_text1 = bottom_texts[1]
 	local center_text5 = center_texts[5]
@@ -73,8 +71,8 @@ local function cofunc(yd)
 				elseif specialization == 3 then
 					monitor_spells = frost_monitor_spells
 				end
-				grid_profile = Peachpies.GridsConfig(Peachpies.GetProfile(),grids_meta)
-				if grid_profile.Enable then
+				grids_profile = Peachpies.GridsConfig(Peachpies.GetProfile(),grids_meta)
+				if grids_profile.Enable then
 					yd=coyield(2)
 				else
 					yd=coyield()
@@ -89,9 +87,9 @@ local function cofunc(yd)
 			if UnitAffectingCombat("player") or (not player_self and UnitIsVisible("target")) then
 				local t = unit_range("target")
 				if t then
-					Peachpies_GridCenter(grid_profile,t,10,43,center_text1,"%d")
+					Peachpies_GridCenter(grids_profile,t,10,43,center_text1,"%d")
 				end
-				Peachpies_GridsSpellMinitoring(grid_profile,grids_meta,monitor_spells)
+				Peachpies_GridsSpellMinitoring(grids_profile,grids_meta,monitor_spells)
 				local castname, casttext, casttexture, caststartTimeMS, castendTimeMS, castisTradeSkill, castcastID, castnotInterruptible, castspellId = UnitCastingInfo("player")
 				local charges = UnitPower("player", 16)
 				local max_charges = UnitPowerMax("player", 16)
@@ -137,7 +135,7 @@ local function cofunc(yd)
 					if arcane_harmony_stacks == 0 then
 						bottom_text1:Hide()
 					else
-						Peachpies_GridCenter(grid_profile,arcane_harmony_stacks,suggest_min_arcane_harmony_stacks,max_arcane_harmony_stacks,bottom_text1)
+						Peachpies_GridCenter(grids_profile,arcane_harmony_stacks,suggest_min_arcane_harmony_stacks,max_arcane_harmony_stacks,bottom_text1)
 						bottom_text1:Show()
 					end
 					local in_radiant_spark
@@ -275,7 +273,7 @@ local function cofunc(yd)
 						end
 						spell_queue[#spell_queue+1] = thisroundspell
 					end
---					Peachpies_GridCenter(grid_profile,arcane_explosion_count,3,10,center_text5,"%d")
+--					Peachpies_GridCenter(grids_profile,arcane_explosion_count,3,10,center_text5,"%d")
 					GridsQueueSpells(castspellId,castendTimeMS,spell_queue,backgrounds,cooldowns,1,single_target_grids_count-1)
 				end
 				local arcane_explosion_count = 0 
@@ -341,7 +339,7 @@ local function cofunc(yd)
 					end
 					spell_queue[#spell_queue + 1] = thisroundspell
 				end
-				Peachpies_GridCenter(grid_profile,arcane_explosion_count,3,10,center_text5,"%d")
+				Peachpies_GridCenter(grids_profile,arcane_explosion_count,3,10,center_text5,"%d")
 				GridsQueueSpells(castspellId,castendTimeMS,spell_queue,backgrounds,cooldowns,single_target_grids_count,single_target_grids_count+aoe_grids_count-2)
 				globalframe:Show()
 			else
