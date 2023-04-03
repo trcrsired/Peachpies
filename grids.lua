@@ -155,7 +155,7 @@ function Peachpies.GridsConfig(db,grids_meta)
 			local center_text = center_text_tbls[i]
 			local bottom_text = bottom_text_tbls[i]
 			local sz = size
-			if i == 1 or i == p or i >= m then
+			if i == 1 or i == p-1 or i >= m then
 				sz = sz*2
 			end
 			frame:SetSize(sz,sz)

@@ -19,6 +19,9 @@ local GetSpellCooldown = GetSpellCooldown
 local UnitAura = UnitAura
 local GridsQueueSpells = Peachpies.GridsQueueSpells
 local wipe = wipe
+local UnitCanAttack = UnitCanAttack
+local CheckInteractDistance = CheckInteractDistance
+local C_NamePlate_GetNamePlates = C_NamePlate.GetNamePlates
 
 local arcane_power_spellid = 365350
 --local arcane_power_buff_id = 365362
@@ -57,6 +60,7 @@ local function cofunc(yd)
 	local grid_profile
 	local center_text1 = center_texts[1]
 	local bottom_text1 = bottom_texts[1]
+	local center_text5 = center_texts[5]
 	local specialization
 	local spell_queue = {}
 	while true do
@@ -159,6 +163,8 @@ local function cofunc(yd)
 					in_touch_of_the_magi = true
 				end
 				in_touch_of_the_magi = in_touch_of_the_magi and is_spell_known_not_cooldown(321507)
+
+				local single_charages = charges
 				for i=1,5 do
 					local thisroundspell = 30451
 					if in_radiant_spark then
@@ -183,7 +189,7 @@ local function cofunc(yd)
 					elseif arcane_orb_usable then
 						thisroundspell = 153626
 						arcane_orb_usable = false
-					elseif charges == max_charges then
+					elseif single_charages == max_charges then
 						if has_clearcasting then
 							thisroundspell = 5143
 							has_clearcasting = false
@@ -192,18 +198,53 @@ local function cofunc(yd)
 						end
 					end
 					if thisroundspell == 30451 or thisroundspell == 153626 then
-						charges = charges + 1
+						single_charages = single_charages + 1
 					elseif thisroundspell == 321507 then
-						charges = charges + 4
+						single_charages = single_charages + 4
 					elseif thisroundspell == 44425 then
-						charges = 0
+						single_charages = 0
 					end
-					if max_charges < charges then
-						max_charges = charges
+					if max_charges < single_charages then
+						max_charges = single_charages
 					end
 					spell_queue[i]=thisroundspell
 				end
 				GridsQueueSpells(castspellId,castendTimeMS,spell_queue,backgrounds,cooldowns,1,4)
+				local arcane_explosion_count = 0 
+				local aoe_charges = charges
+				local nameplates = C_NamePlate_GetNamePlates()
+				if nameplates then
+					for i=1,#nameplates do
+						local utoken = nameplates[i].namePlateUnitToken
+						if utoken then
+							if UnitCanAttack("player",utoken) and CheckInteractDistance(utoken, 3) then
+								arcane_explosion_count = arcane_explosion_count + 1
+							end
+						end
+					end
+				end
+				
+				wipe(spell_queue)
+				for i=1,5 do
+					local thisroundspell = 44425
+					if not has_nether_tempest and is_spell_known(114923) then
+						thisroundspell = 114923
+						has_nether_tempest = true
+					end
+					if aoe_charges ~= max_charges then
+						thisroundspell = 1449
+					end
+					if thisroundspell == 1449 then
+						if 0 < arcane_explosion_count then
+							aoe_charges = aoe_charges + 1
+						end
+					elseif thisroundspell == 44425 then
+						aoe_charges = 0
+					end
+					spell_queue[#spell_queue + 1] = thisroundspell
+				end
+				Peachpies_GridCenter(grid_profile,arcane_explosion_count,3,10,center_text5,"%d")
+				GridsQueueSpells(castspellId,castendTimeMS,spell_queue,backgrounds,cooldowns,5,8)
 				local t = unit_range("target")
 				if t then
 					Peachpies_GridCenter(grid_profile,t,10,43,center_text1,"%.0f")
