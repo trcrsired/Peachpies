@@ -64,12 +64,12 @@ function Peachpies.AddCoroutine(co)
 	coroutines[#coroutines+1]=co
 end
 
-function Peachpies.GetProfile(name)
+function Peachpies.GetProfile(key)
 	local profile = Peachpies.db.profile
-	local t = profile[name]
+	local t = profile[key]
 	if t == nil then
 		t = {}
-		profile[name] = t
+		profile[key] = t
 	end
 	return t
 end
@@ -219,3 +219,21 @@ Peachpies.is_spell_known = IsUsableSpell
 else
 Peachpies.is_spell_known = function() return true end
 end
+
+local is_spell_known = Peachpies.is_spell_known
+
+local GetSpellCooldown = GetSpellCooldown
+
+local function is_spell_known_not_cooldown(spellid)
+	if not is_spell_known(spellid) then
+		return
+	end
+	local start, duration, enabled, modRate = GetSpellCooldown(spellid)
+
+	local _, gcd_duration = GetSpellCooldown(61304)
+	if duration == gcd_duration or duration == 0 then
+		return true
+	end
+end
+
+Peachpies.is_spell_known_not_cooldown = is_spell_known_not_cooldown

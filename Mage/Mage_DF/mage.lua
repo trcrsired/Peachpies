@@ -1,7 +1,7 @@
 local Peachpies = LibStub("AceAddon-3.0"):GetAddon("Peachpies")
 
 local unit_range = Peachpies.unit_range
-local Peachpies_GridsSpellMinitoring = Peachpies.GridsSpellMinitoring
+local Peachpies_GridsSpellMinitoring = Peachpies.GridsSpellMonitoring
 local coyield = coroutine.yield
 local GetSpellTexture = GetSpellTexture
 local is_spell_known = Peachpies.is_spell_known
@@ -15,9 +15,13 @@ local UnitCastingInfo = UnitCastingInfo
 local Peachpies_GridCenter = Peachpies.GridCenter
 local UnitAffectingCombat = UnitAffectingCombat
 local UnitIsVisible = UnitIsVisible
+local GetSpellCooldown = GetSpellCooldown
+local UnitAura = UnitAura
+local GridsQueueSpells = Peachpies.GridsQueueSpells
+local wipe = wipe
 
 local arcane_power_spellid = 365350
-local arcane_power_buff_id = 365362
+--local arcane_power_buff_id = 365362
 
 --Arcane: Arcane Power, Touch of the Magi,Radiant Spark , Rune of Power, Mirror, Timewrap
 
@@ -37,6 +41,10 @@ if to_monitors_buffs < #fire_monitor_spells then
 	to_monitors_buffs = #fire_monitor_spells
 end
 
+local evocation_start,evocation_duration,evocation_enabled,evocation_modRate = GetSpellCooldown(12051)
+
+local is_spell_known_not_cooldown = Peachpies.is_spell_known_not_cooldown
+
 local function cofunc(yd)
 	local monitor_spells
 
@@ -50,6 +58,7 @@ local function cofunc(yd)
 	local center_text1 = center_texts[1]
 	local bottom_text1 = bottom_texts[1]
 	local specialization
+	local spell_queue = {}
 	while true do
 		repeat
 		if yd == 0 then
@@ -70,10 +79,10 @@ local function cofunc(yd)
 		else
 			local player_self = UnitIsUnit("player","target")
 			if UnitAffectingCombat("player") or (not player_self and UnitIsVisible("target")) then
-				local gcd_start, gcd_duration, gcd_enabled, gcd_modRate = GetSpellCooldown(61304)
 				local charges = UnitPower("player", 16)
 				local max_charges = UnitPowerMax("player", 16)
 
+--[[
 				local mana = UnitPower("player", 0)
 				local max_mana = UnitPowerMax("player", 0)
 				local val = GetMasteryEffect()/100 + 1
@@ -84,6 +93,7 @@ local function cofunc(yd)
 				local current_time = starttime
 				local haste_effect = 1 + GetHaste()/100
 				local real_gcd_val = 1.5 / haste_effect
+]]
 				local arcane_harmony_stacks = 0
 				local max_arcane_harmony_stacks = 20
 				local suggest_min_arcane_harmony_stacks = 12
@@ -92,8 +102,6 @@ local function cofunc(yd)
 					suggest_min_arcane_harmony_stacks = 6
 				end
 				local has_clearcasting = false
-				local has_rune_of_power = false
-				local has_arcane_power = false	-- arcane_power is arcane surge on dragonflight
 				for i=1,40 do
 					local name, icon, count, debuffType, duration, expirationTime, source, isStealable, 
 					nameplateShowPersonal, spellId = UnitAura("PLAYER",i,"PLAYER|HELPFUL")
@@ -106,12 +114,6 @@ local function cofunc(yd)
 					if spellId == 263725 then
 						has_clearcasting = true
 					end
-					if spellId == 116014 then
-						has_rune_of_power = true
-					end
-					if spellId == arcane_power_buff_id then
-						has_arcane_power = true
-					end
 				end
 				if arcane_harmony_stacks == 0 then
 					bottom_text1:Hide()
@@ -119,8 +121,9 @@ local function cofunc(yd)
 					Peachpies_GridCenter(grid_profile,arcane_harmony_stacks,suggest_min_arcane_harmony_stacks,max_arcane_harmony_stacks,bottom_text1)
 					bottom_text1:Show()
 				end
-				local has_radiant_spark
+				local in_radiant_spark
 				local radiant_spark_vulnerability_counts = 0
+				local has_nether_tempest
 				for i=1,40 do
 					local name, icon, count, debuffType, duration, expirationTime, source, isStealable, 
 					nameplateShowPersonal, spellId = UnitAura("TARGET",i,"PLAYER|HARMFUL")
@@ -129,208 +132,73 @@ local function cofunc(yd)
 					end
 					if spellId == 376104 then
 						radiant_spark_vulnerability_counts = count
+					elseif spellId == 114923 then
+						has_nether_tempest = true
 					end
 					if spellId == 376103 then	-- Radiant Spark
-						has_radiant_spark = true
-					end
-					
-				end
-				local burn_totm, burn_arcane_power
-				if not has_rune_of_power then
-					local start, duration, enabled, modRate = GetSpellCooldown(116011)	--rune of power
-					if duration ~= gcd_duration and duration ~= 0 then
-						if starttime < start + 1 then
-							has_rune_of_power = true
-						end
-					end
-				end
-				local arcane_orb_casted = false
-				local casting_first_spell = true
-				local totm_casted = false
-				local i = 1
-				local has_rune_of_power_or_arcane_power = has_rune_of_power or has_arcane_power
-				local burn_phase = has_radiant_spark or has_rune_of_power_or_arcane_power
-				local castname, casttext, casttexture, caststartTimeMS, castendTimeMS, castisTradeSkill, castcastID, castnotInterruptible, castspellId = UnitCastingInfo("player")
-				if castspellId == 116011 or castspellId == 376103 or castspellId == 321507 or castspellId == arcane_power_spellid then
-					burn_phase = true
-				end
-				if burn_phase then
-					local start, duration, enabled, modRate
-					if not has_rune_of_power then
-						start, duration, enabled, modRate = GetSpellCooldown(116011)	--rune of power
-						if duration ~= gcd_duration and duration ~= 0 then
-							if start + 1 < starttime then
-								has_rune_of_power = true
-							end
-						end
-						start, duration, enabled, modRate = GetSpellCooldown(arcane_power_spellid)	--arcane power
-						if duration ~= gcd_duration and duration ~= 0 then
-							if start + 1 < starttime then
-								has_arcane_power = true
-							end
-						end
-						start, duration, enabled, modRate = GetSpellCooldown(376103)	--radiant spark
-						if duration ~= gcd_duration and duration ~= 0 then
-							if start + 1 < starttime then
-								has_radiant_spark = true
-							end
-						end
-					end
-					if castspellId == 376103 then
-						has_radiant_spark = true
-					else
-						start, duration, enabled, modRate = GetSpellCooldown(376103)	--radiant spark
-						if duration == gcd_duration or duration == 0 then
-							has_radiant_spark = true
-						end
-					end
-					if castspellId == 321507 then
-						charges = max_charges
-					else
-						start, duration, enabled, modRate = GetSpellCooldown(321507)	--touch of the magi
-						if duration == gcd_duration or duration == 0 then
-							burn_totm = true
-							charges = max_charges
-						end
-					end
-					if not has_rune_of_power and castspellId ~= 116011 then
-						start, duration, enabled, modRate = GetSpellCooldown(arcane_power_spellid)	--arcane power
-						if duration == 0 then
-							burn_arcane_power = true
-						end
-					end
-					if has_radiant_spark then
-						burn_phase = true
-					end
-				end
-				--GetSpellCooldown(376103)
-				while i <= 4 do
-					local current_spell = 44425
-					repeat
-						if (not has_arcane_power or not isretail) and percentage < chargemana then
-							-- Evocation
-							if is_spell_known(12051) then
-								local evocation_start,evocation_duration,evocation_enabled,evocation_modRate = GetSpellCooldown(12051)
-								if gcd_duration < evocation_duration or (evocation_duration <= gcd_duration and current_time + gcd_duration >= evocation_start + evocation_duration)  then
-									current_spell = 12051
-									current_time = current_time + 6/haste_effect
-									percentage = val
-								end
-								break
-							end
-						end
-						if burn_phase then
-							if burn_arcane_power then
-								if radiant_spark_vulnerability_counts == 3 then
-									current_spell = arcane_power_spellid
-									burn_arcane_power = false
-									radiant_spark_vulnerability_counts = radiant_spark_vulnerability_counts + 1
-									burn_totm = true
-									break
-								end
-							end
-							if burn_totm then
-								if charges < max_charges then
-									current_spell = 321507
-									charges = max_charges
-								else
-									current_spell = 44425
-									charges = 0
-								end
-								burn_totm = false
-								break
-							end
-							if charges < max_charges then
-								-- Arcane Orb
-								if is_spell_known(153626) then
-									if not arcane_orb_casted then
-										local start, duration, enabled, modRate = GetSpellCooldown(153626)
-										if duration <= gcd_duration then
-											current_spell = 153626
-											charges = charges + 1
-											percentage = percentage - 0.1
-											current_time = current_time + real_gcd_val
-											arcane_orb_casted = true
-											break
-										end
-									end
-								end
-							end
-						else
-							if has_clearcasting and not burn_phase then
-								arcane_harmony_stacks = arcane_harmony_stacks + 8
-								current_spell = 5143
-								has_clearcasting = false
-								break
-							end
-							if charges == 0 then
-								-- Touch of the Magi
-								if is_spell_known(321507) then
-									if totm_casted then
-										local start, duration, enabled, modRate = GetSpellCooldown(321507)
-										if duration <= gcd_duration then
-											current_spell = 321507
-											charges = max_charges
-											current_time = current_time + real_gcd_val
-											totm_casted = true
-											break
-										end
-									end
-								end
-								-- Arcane Orb
-								if is_spell_known(153626) then
-									if not arcane_orb_casted then
-										local start, duration, enabled, modRate = GetSpellCooldown(153626)
-										if duration <= gcd_duration then
-											current_spell = 153626
-											charges = charges + 1
-											percentage = percentage - 0.1
-											current_time = current_time + real_gcd_val
-											arcane_orb_casted = true
-											break
-										end
-									end
-								end
-							end
-						end
-						if charges < max_charges then
-							current_spell = 30451
-							charges = charges + 1
-							break
-						end
-						if has_radiant_spark and radiant_spark_vulnerability_counts ~= 4 then
-							current_spell = 30451
-							radiant_spark_vulnerability_counts = radiant_spark_vulnerability_counts + 1
-						elseif not has_radiant_spark and has_rune_of_power_or_arcane_power then
-							current_spell = 5143
-							if has_clearcasting then
-								arcane_harmony_stacks = arcane_harmony_stacks + 8
-								has_clearcasting = false
-							else
-								arcane_harmony_stacks = arcane_harmony_stacks + 5
-							end
-						else
-							current_spell = 44425
-							charges = 0
-							arcane_harmony_stacks = 0
-						end
-					until true
-					local skip_this_round = false
-					if casting_first_spell then
-						if castname then
-							if castspellId == current_spell then
-								skip_this_round = true
-							end
-							casting_first_spell = false
-						end
-					end
-					if not skip_this_round then
-						backgrounds[i]:SetTexture(GetSpellTexture(current_spell))
-						cooldowns[i]:SetCooldown(gcd_start, gcd_duration, gcd_enabled, gcd_modRate)
-						i = i + 1
+						in_radiant_spark = true
 					end
 				end
 				
+				local castname, casttext, casttexture, caststartTimeMS, castendTimeMS, castisTradeSkill, castcastID, castnotInterruptible, castspellId = UnitCastingInfo("player")
+				if castspellId == 376103 then
+					in_radiant_spark = true
+				end
+				wipe(spell_queue)
+
+				local arcane_orb_usable = is_spell_known_not_cooldown(153626)
+				local arcane_surge_usable = is_spell_known_not_cooldown(365350)
+				local arcane_barrage_usable = is_spell_known(44425)
+				local arcane_missile_usable = is_spell_known(44425)
+				if not arcane_missile_usable then
+					has_clearcasting = false
+				end
+				local in_touch_of_the_magi = in_radiant_spark and is_spell_known_not_cooldown(321507)
+				for i=1,5 do
+					local thisroundspell = 30451
+					if in_radiant_spark then
+						if radiant_spark_vulnerability_counts == 4 then
+							if arcane_barrage_usable then
+								thisroundspell = 44425
+							end
+							in_radiant_spark = false
+							radiant_spark_vulnerability_counts = 0
+						else
+							if radiant_spark_vulnerability_counts == 3 then
+								if arcane_surge_usable then
+									thisroundspell = 365350
+									arcane_surge_usable = false
+								end
+							end
+							radiant_spark_vulnerability_counts = radiant_spark_vulnerability_counts + 1
+						end
+					elseif in_touch_of_the_magi then
+						thisroundspell = 321507
+						in_touch_of_the_magi = false
+					elseif arcane_orb_usable then
+						thisroundspell = 153626
+						arcane_orb_usable = false
+					elseif charges == max_charges then
+						if has_clearcasting then
+							thisroundspell = 5143
+							has_clearcasting = false
+						elseif arcane_barrage_usable then
+							thisroundspell = 44425
+						end
+					end
+					if thisroundspell == 30451 or thisroundspell == 153626 then
+						charges = charges + 1
+					elseif thisroundspell == 321507 then
+						charges = charges + 4
+					elseif thisroundspell == 44425 then
+						charges = 0
+					end
+					if max_charges < charges then
+						max_charges = charges
+					end
+					spell_queue[i]=thisroundspell
+				end
+				GridsQueueSpells(castspellId,spell_queue,backgrounds,cooldowns,1,4)
 				local t = unit_range("target")
 				if t then
 					Peachpies_GridCenter(grid_profile,t,10,43,center_text1,"%.0f")

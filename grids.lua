@@ -238,3 +238,20 @@ function Peachpies.GridsSpellMonitoring(grid_profile,grids_meta,monitoredspells)
 
 	end
 end
+
+local GetSpellTexture = GetSpellTexture
+local GetSpellCooldown = GetSpellCooldown
+
+function Peachpies.GridsQueueSpells(castingspellid,castingqueue,backgrounds,cooldowns,bgi,edi)
+	local castingqueue1 = castingqueue[1]
+	local starti = 1
+	if castingqueue1 == castingspellid then
+		starti = 2
+	end
+	for i=bgi,edi do
+		local spellid = castingqueue[starti]
+		backgrounds[i]:SetTexture(GetSpellTexture(spellid))
+		cooldowns[i]:SetCooldown(GetSpellCooldown(spellid))
+		starti = starti + 1
+	end
+end
