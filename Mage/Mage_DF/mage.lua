@@ -203,7 +203,7 @@ local function cofunc(yd)
 					end
 					spell_queue[i]=thisroundspell
 				end
-				GridsQueueSpells(castspellId,spell_queue,backgrounds,cooldowns,1,4)
+				GridsQueueSpells(castspellId,castendTimeMS,spell_queue,backgrounds,cooldowns,1,4)
 				local t = unit_range("target")
 				if t then
 					Peachpies_GridCenter(grid_profile,t,10,43,center_text1,"%.0f")

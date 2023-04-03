@@ -241,12 +241,16 @@ end
 
 local GetSpellTexture = GetSpellTexture
 local GetSpellCooldown = GetSpellCooldown
+local GetTime = GetTime
 
-function Peachpies.GridsQueueSpells(castingspellid,castingqueue,backgrounds,cooldowns,bgi,edi)
+function Peachpies.GridsQueueSpells(castingspellid,castendTimeMS,castingqueue,backgrounds,cooldowns,bgi,edi)
 	local castingqueue1 = castingqueue[1]
 	local starti = 1
 	if castingqueue1 == castingspellid then
-		starti = 2
+		local gtmms = GetTime()*1000
+		if castendTimeMS < gtmms + 500 then
+			starti = 2
+		end
 	end
 	for i=bgi,edi do
 		local spellid = castingqueue[starti]
