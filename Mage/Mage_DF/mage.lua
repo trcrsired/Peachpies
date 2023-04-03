@@ -205,7 +205,7 @@ local function cofunc(yd)
 						single_charages = 0
 					end
 					if max_charges < single_charages then
-						max_charges = single_charages
+						single_charages = max_charges 
 					end
 					spell_queue[i]=thisroundspell
 				end
@@ -217,7 +217,7 @@ local function cofunc(yd)
 					for i=1,#nameplates do
 						local utoken = nameplates[i].namePlateUnitToken
 						if utoken then
-							if UnitCanAttack("player",utoken) and CheckInteractDistance(utoken, 3) then
+							if UnitCanAttack("player",utoken) and CheckInteractDistance(utoken, 2) then
 								arcane_explosion_count = arcane_explosion_count + 1
 							end
 						end
@@ -225,14 +225,14 @@ local function cofunc(yd)
 				end
 				
 				wipe(spell_queue)
+				local nether_tempest_usable = is_spell_known(114923)
 				for i=1,5 do
-					local thisroundspell = 44425
-					if not has_nether_tempest and is_spell_known(114923) then
+					local thisroundspell = 1449
+					if not has_nether_tempest and nether_tempest_usable then
 						thisroundspell = 114923
 						has_nether_tempest = true
-					end
-					if aoe_charges ~= max_charges then
-						thisroundspell = 1449
+					elseif max_charges == aoe_charges then
+						thisroundspell = 44425
 					end
 					if thisroundspell == 1449 then
 						if 0 < arcane_explosion_count then
@@ -241,13 +241,16 @@ local function cofunc(yd)
 					elseif thisroundspell == 44425 then
 						aoe_charges = 0
 					end
+					if max_charges < aoe_charges then
+						aoe_charges = max_charges
+					end
 					spell_queue[#spell_queue + 1] = thisroundspell
 				end
 				Peachpies_GridCenter(grid_profile,arcane_explosion_count,3,10,center_text5,"%d")
 				GridsQueueSpells(castspellId,castendTimeMS,spell_queue,backgrounds,cooldowns,5,8)
 				local t = unit_range("target")
 				if t then
-					Peachpies_GridCenter(grid_profile,t,10,43,center_text1,"%.0f")
+					Peachpies_GridCenter(grid_profile,t,10,43,center_text1,"%d")
 				end
 				Peachpies_GridsSpellMinitoring(grid_profile,grids_meta,monitor_spells)
 				globalframe:Show()
