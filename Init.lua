@@ -283,8 +283,11 @@ function Peachpies.enemies_in_range_count(range)
 		for i=1,#nameplates do
 			local utoken = nameplates[i].namePlateUnitToken
 			if utoken then
-				if UnitCanAttack("player",utoken) and unit_range(utoken) <= range then
-					count = count + 1
+				if UnitCanAttack("player",utoken) then
+					local rg = unit_range(utoken)
+					if rg and rg <= range then
+						count = count + 1
+					end
 				end
 			end
 		end
