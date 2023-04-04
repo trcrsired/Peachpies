@@ -141,7 +141,7 @@ function Peachpies.handle_range_healing_spell(spellid, grid_meta,grid_profile,
 			break
 		end
 		i = i + 1
-		if u and not UnitIsDeadOrGhost(u) then
+		if u and not UnitIsDeadOrGhost(u) and (UnitIsFriend(u,"player")) then
 			local this_has_buff = true
 			if with_buff then
 				this_has_buff = false
