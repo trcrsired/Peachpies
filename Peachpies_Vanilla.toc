@@ -19,3 +19,4 @@ Init.lua
 grids.lua
 grid.lua
 bar.lua
+range_healing.lua
