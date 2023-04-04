@@ -5,19 +5,15 @@ local UnitIsVisible = UnitIsVisible
 
 Peachpies.AddCoroutine(coroutine.create(Peachpies.create_range_healing_spell_coroutine(
 {
-nameinfo = {key="monk_mw_revival",spellid=115310},
+nameinfo = {key="monk_mw_revival",spellid=366155},
 unit_in_range = function(u)
 	return UnitInRange(u),UnitIsVisible(u)
 end,
-constant = 3.2545*1.08,
-spells = {115310,388615},
+constant = 2,
+spells = 366155,
 specialization = 2,
 caps = 6,
-raidcooldown2x = true,
-secure = table.concat({
-	"/use [known:115310] ",
-	GetSpellInfo(115310),
-	";[known:388615] ",
-	GetSpellInfo(388615),nil}),
+secure = 366155,
+raidcooldown2x = true
 }
 )))
