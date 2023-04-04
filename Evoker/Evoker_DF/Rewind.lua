@@ -12,6 +12,7 @@ end,
 constant = 2,
 spells = 366155,
 specialization = 2,
+hide_on_cooldown = 8,
 secure = 366155,
 raidcooldown2x = true
 }
