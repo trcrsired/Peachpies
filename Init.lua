@@ -17,7 +17,7 @@ function Peachpies:OnInitialize()
 	self.db = LibStub("AceDB-3.0"):New("PeachpiesDB",{},true)
 	local LibDualSpec = LibStub('LibDualSpec-1.0',true)
 	if LibDualSpec then
-		LibDualSpec:EnhanceDatabase(self.db, "CRaidFrame")
+		LibDualSpec:EnhanceDatabase(self.db, "Peachpies")
 	end
 	self:RegisterChatCommand("Peachpies", "ChatCommand")
 	local _,_,classId = UnitClass("player")
@@ -269,4 +269,23 @@ function Peachpies.monitor_spells_maximum(tb)
 		end
 	end
 	return maximum_count,tb
+end
+
+local UnitCanAttack = UnitCanAttack
+local C_NamePlate_GetNamePlates = C_NamePlate.GetNamePlates
+
+function Peachpies.enemies_in_10y_count()
+	local count = 0
+	local nameplates = C_NamePlate_GetNamePlates()
+	if nameplates then
+		for i=1,#nameplates do
+			local utoken = nameplates[i].namePlateUnitToken
+			if utoken then
+				if UnitCanAttack("player",utoken) and CheckInteractDistance(utoken, 2) then
+					count = count + 1
+				end
+			end
+		end
+	end
+	return count
 end

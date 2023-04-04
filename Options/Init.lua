@@ -9,7 +9,12 @@ Peachpies_Options.options = {
 	args = {profile = LibStub("AceDBOptions-3.0"):GetOptionsTable(Peachpies.db)}
 }
 function Peachpies_Options:OnInitialize()
+	local profile = LibStub("AceDBOptions-3.0"):GetOptionsTable(Peachpies.db)
 	LibStub("AceConfig-3.0"):RegisterOptionsTable("Peachpies", Peachpies_Options.options)
+	local LibDualSpec = LibStub('LibDualSpec-1.0',true)
+	if LibDualSpec then
+		LibDualSpec:EnhanceOptions(profile, Peachpies.db)
+	end
 	Peachpies.db.RegisterCallback(Peachpies_Options, "OnProfileChanged")
 	Peachpies.db.RegisterCallback(Peachpies_Options, "OnProfileCopied", "OnProfileChanged")
 	Peachpies.db.RegisterCallback(Peachpies_Options, "OnProfileReset", "OnProfileChanged")

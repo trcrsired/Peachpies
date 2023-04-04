@@ -18,10 +18,8 @@ local GetSpellCooldown = GetSpellCooldown
 local UnitAura = UnitAura
 local GridsQueueSpells = Peachpies.GridsQueueSpells
 local wipe = wipe
-local UnitCanAttack = UnitCanAttack
-local CheckInteractDistance = CheckInteractDistance
-local C_NamePlate_GetNamePlates = C_NamePlate.GetNamePlates
 local math_floor = math.floor
+local enemies_in_10y_count = Peachpies.enemies_in_10y_count
 
 local monitored_spells =
 {
@@ -282,20 +280,7 @@ local function cofunc(yd)
 --					Peachpies_GridCenter(grids_profile,arcane_explosion_count,3,10,center_text5,"%d")
 					GridsQueueSpells(castspellId,castendTimeMS,spell_queue,backgrounds,cooldowns,1,single_target_grids_count-1)
 				end
-				local arcane_explosion_count = 0 
-				local aoe_charges = charges
-				local nameplates = C_NamePlate_GetNamePlates()
-				if nameplates then
-					for i=1,#nameplates do
-						local utoken = nameplates[i].namePlateUnitToken
-						if utoken then
-							if UnitCanAttack("player",utoken) and CheckInteractDistance(utoken, 2) then
-								arcane_explosion_count = arcane_explosion_count + 1
-							end
-						end
-					end
-				end
-				
+				local arcane_explosion_count = enemies_in_10y_count()
 				wipe(spell_queue)
 				local nether_tempest_usable = is_spell_known(114923)
 				local blizzard_usable = is_spell_known_not_cooldown(190356)
@@ -305,6 +290,7 @@ local function cofunc(yd)
 				elseif is_spell_known_not_cooldown(84714) then
 					orb_usable = 84714
 				end
+				local aoe_charges = charges
 				for i=1,aoe_grids_count do
 					local thisroundspell = 1449
 					if max_charges == aoe_charges and arcane_barrage_usable then
