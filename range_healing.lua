@@ -263,7 +263,6 @@ function Peachpies.handle_range_healing_spell(spellid, grid_meta,grid_profile,
 			end
 		end
 	end
-
 	local effective_green_number = metadata.effective_green_number
 	local effective_blue_number = metadata.effective_blue_number
 	if effective_green_number == nil then
@@ -289,6 +288,9 @@ function Peachpies.handle_range_healing_spell(spellid, grid_meta,grid_profile,
 
 	if caps then
 		total_healing = total_healing * caps
+		if health_deficits > total_healing then
+			health_deficits = total_healing
+		end
 	else
 		total_healing = total_healing * visible_counts
 	end
