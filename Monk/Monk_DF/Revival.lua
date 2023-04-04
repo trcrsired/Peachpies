@@ -13,6 +13,7 @@ constant = 3.2545*1.08,
 spells = {115310,388615},
 specialization = 2,
 raidcooldown2x = true,
+hide_on_cooldown = 8,
 secure = table.concat({
 	"/use [known:115310] ",
 	GetSpellInfo(115310),
