@@ -274,14 +274,16 @@ end
 local UnitCanAttack = UnitCanAttack
 local C_NamePlate_GetNamePlates = C_NamePlate.GetNamePlates
 
-function Peachpies.enemies_in_10y_count()
+local unit_range = Peachpies.unit_range
+
+function Peachpies.enemies_in_range_count(range)
 	local count = 0
 	local nameplates = C_NamePlate_GetNamePlates()
 	if nameplates then
 		for i=1,#nameplates do
 			local utoken = nameplates[i].namePlateUnitToken
 			if utoken then
-				if UnitCanAttack("player",utoken) and CheckInteractDistance(utoken, 2) then
+				if UnitCanAttack("player",utoken) and unit_range(utoken) <= range then
 					count = count + 1
 				end
 			end

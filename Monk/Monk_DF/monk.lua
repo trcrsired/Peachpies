@@ -6,27 +6,28 @@ local coyield = coroutine.yield
 local is_spell_known = Peachpies.is_spell_known
 local UnitPower = UnitPower
 local UnitPowerMax = UnitPowerMax
-local GetTime = GetTime
-local GetHaste = GetHaste
-local player_in_pvp = Peachpies.player_in_pvp
 local UnitCastingInfo = UnitCastingInfo
 local Peachpies_GridCenter = Peachpies.GridCenter
 local UnitIsUnit = UnitIsUnit
 local UnitAffectingCombat = UnitAffectingCombat
 local UnitIsVisible = UnitIsVisible
-local GetSpellCooldown = GetSpellCooldown
 local UnitAura = UnitAura
 local GridsQueueSpells = Peachpies.GridsQueueSpells
 local wipe = wipe
-local math_floor = math.floor
 local is_spell_known_not_cooldown = Peachpies.is_spell_known_not_cooldown
+local enemies_in_range_count = Peachpies.enemies_in_range_count
 local IsUsableSpell = IsUsableSpell
-local enemies_in_10y_count = Peachpies.enemies_in_10y_count
+local GetSpellCharges = GetSpellCharges
 
 local monitored_spells =
 {
 {},
-{},
+{
+116680,
+197908,
+123988,
+325197
+},
 {
 137639,	-- Storm, Earth and Fire
 123904,	-- Xuen
@@ -88,6 +89,22 @@ local function cofunc(yd)
 				local blackout_kick_usable = is_spell_known_not_cooldown(100784)
 				local rising_sun_kick_usable = is_spell_known_not_cooldown(107428)
 				local touch_of_death_usable = is_spell_known_not_cooldown(322109) and IsUsableSpell(322109)
+				local breath_of_fire_usable = is_spell_known_not_cooldown(115181)
+				local spinning_crane_kick_usable = is_spell_known_not_cooldown(101546)
+
+				local keg_smash_charges
+				if is_spell_known_not_cooldown(121253) then
+					keg_smash_charges = GetSpellCharges(121253)
+				end
+				local aoe_keg_smash_charges = keg_smash_charges
+
+				local blackout_kick_charges
+				if blackout_kick_usable then
+					blackout_kick_charges = GetSpellCharges(205523)
+				end
+				local aoe_blackout_kick_charges = blackout_kick_charges
+				local aoe_rising_sun_kick_usable = rising_sun_kick_usable
+				local aoe_breath_of_fire_usable = breath_of_fire_usable
 
 				local power_strikes_buff
 				for i=1,40 do
@@ -101,70 +118,146 @@ local function cofunc(yd)
 					end
 				end
 
-
+				local rjw_usable = is_spell_known_not_cooldown(116847)
 				local single_charges = charges
 				local single_energy = energy
 				wipe(spell_queue)
-				for i=1,single_target_grids_count do
-					local queue_spell = 100780
-					if touch_of_death_usable then
-						queue_spell = 322109
-						touch_of_death_usable = false
-					elseif 2 < max_charges - single_charges and 80 < single_energy then
-					elseif strike_of_the_windlord_usable and 1 < single_charges then
-						queue_spell = 392983
-						strike_of_the_windlord_usable = false
-						single_charges = single_charges - 2
-					elseif fists_of_fury_usable and 2 < single_charges and single_energy < 80 then
-						queue_spell = 113656
-						fists_of_fury_usable = false
-						single_charges = single_charges - 3
-					elseif rising_sun_kick_usable and 1 < single_charges and 20 < single_energy then
-						queue_spell = 107428
-						rising_sun_kick_usable = false
-						single_charges = single_charges - 2
-					elseif blackout_kick_usable and 0 < single_charges and 10 < single_energy then
-						queue_spell = 100784
-						if charges_free then
-							blackout_kick_usable = false
-						end
-						single_charges = single_charges - 1
-					end
-					if queue_spell == 100780 then
-						single_charges = single_charges + 2
-						if power_strikes_buff then
-							single_charges = single_charges + 1
-							power_strikes_buff = false
-						end
-						single_energy = single_energy - 50
-					end
 
-					if charges_free then
-						single_energy = max_energy
-						single_charges = max_charges
-					else
-						if max_charges < single_charges then
-							single_charges = max_charges
+				local faelinestomp_usable = is_spell_known_not_cooldown(388193)
+				if specialization == 1 then
+					local single_rjw_usable = rjw_usable
+					for i=1,single_target_grids_count do
+						local queue_spell = 100780
+						if touch_of_death_usable then
+							queue_spell = 322109
+							touch_of_death_usable = false
+						elseif single_rjw_usable then
+							queue_spell = 116847
+							single_rjw_usable = false
+						elseif keg_smash_charges and 0 < keg_smash_charges then
+							queue_spell = 121253
+							keg_smash_charges = keg_smash_charges - 1
+						elseif blackout_kick_charges and 0 < blackout_kick_charges then
+							queue_spell = 205523
+							blackout_kick_charges = blackout_kick_charges - 1
+						elseif rising_sun_kick_usable then
+							queue_spell = 107428
+							rising_sun_kick_usable = false
+						elseif breath_of_fire_usable then
+							queue_spell = 115181
+							breath_of_fire_usable = false
 						end
-						if single_energy < 0 then
-							single_energy = 0
-						end
+						spell_queue[#spell_queue+1] = queue_spell
 					end
-					spell_queue[#spell_queue+1] = queue_spell
+				elseif specialization == 2 then
+					local single_faelinestomp_usable = faelinestomp_usable
+					for i=1,single_target_grids_count do
+						local queue_spell = 100780
+						if touch_of_death_usable then
+							queue_spell = 322109
+							touch_of_death_usable = false
+						elseif single_faelinestomp_usable then
+							queue_spell = 388193
+							single_faelinestomp_usable = false
+						elseif rising_sun_kick_usable then
+							queue_spell = 107428
+							rising_sun_kick_usable = false
+						elseif blackout_kick_usable then
+							queue_spell = 100784
+							blackout_kick_usable = false
+						else
+							blackout_kick_usable = true
+						end
+						spell_queue[#spell_queue+1] = queue_spell
+					end
+				else
+					for i=1,single_target_grids_count do
+						local queue_spell = 100780
+						if touch_of_death_usable then
+							queue_spell = 322109
+							touch_of_death_usable = false
+						elseif 2 < max_charges - single_charges and 80 < single_energy then
+						elseif strike_of_the_windlord_usable and 1 < single_charges then
+							queue_spell = 392983
+							strike_of_the_windlord_usable = false
+							single_charges = single_charges - 2
+						elseif fists_of_fury_usable and 2 < single_charges and single_energy < 80 then
+							queue_spell = 113656
+							fists_of_fury_usable = false
+							single_charges = single_charges - 3
+						elseif rising_sun_kick_usable and 1 < single_charges and 20 < single_energy then
+							queue_spell = 107428
+							rising_sun_kick_usable = false
+							single_charges = single_charges - 2
+						elseif blackout_kick_usable and 0 < single_charges and 10 < single_energy then
+							queue_spell = 100784
+							if charges_free then
+								blackout_kick_usable = false
+							end
+							single_charges = single_charges - 1
+						end
+						if queue_spell == 100780 then
+							single_charges = single_charges + 2
+							if power_strikes_buff then
+								single_charges = single_charges + 1
+								power_strikes_buff = false
+							end
+							single_energy = single_energy - 50
+						end
+
+						if charges_free then
+							single_energy = max_energy
+							single_charges = max_charges
+						else
+							if max_charges < single_charges then
+								single_charges = max_charges
+							end
+							if single_energy < 0 then
+								single_energy = 0
+							end
+						end
+						spell_queue[#spell_queue+1] = queue_spell
+					end
 				end
 				GridsQueueSpells(castspellId,castendTimeMS,spell_queue,backgrounds,cooldowns,1,single_target_grids_count-1)
 				wipe(spell_queue)
 				local aoe_charges = charges
 				local aoe_energy = energy
-				local spinning_crane_kick_usable = is_spell_known_not_cooldown(101546)
-				if charges_free then
-					local chiburst_usable = is_spell_known_not_cooldown(123986)
-					local faelinestomp_usable = is_spell_known_not_cooldown(388193)
+				local chiburst_usable = is_spell_known_not_cooldown(123986)
+				if specialization == 1 then
+					local aoe_rjw_usable = rjw_usable
 					for i=1,aoe_grids_count do
 						local queue_spell = 100780
-						if faelinestomp_usable then
+						if chiburst_usable then
+							queue_spell = 123986
+							chiburst_usable = false
+						elseif aoe_rjw_usable then
+							queue_spell = 116847
+							aoe_rjw_usable = false
+						elseif aoe_keg_smash_charges and 0 < aoe_keg_smash_charges then
+							queue_spell = 121253
+							aoe_keg_smash_charges = aoe_keg_smash_charges - 1
+						elseif aoe_blackout_kick_charges and 0 < aoe_blackout_kick_charges then
+							queue_spell = 205523
+							aoe_blackout_kick_charges = aoe_blackout_kick_charges - 1
+						elseif aoe_rising_sun_kick_usable then
+							queue_spell = 107428
+							aoe_rising_sun_kick_usable = false
+						elseif aoe_breath_of_fire_usable then
+							queue_spell = 115181
+							aoe_breath_of_fire_usable = false
+						elseif spinning_crane_kick_usable then
+							queue_spell = 322729
+						end
+						spell_queue[#spell_queue+1] = queue_spell
+					end
+				elseif specialization == 2 then
+					local aoe_faelinestomp_usable = faelinestomp_usable
+					for i=1,aoe_grids_count do
+						local queue_spell = 100780
+						if aoe_faelinestomp_usable then
 							queue_spell = 388193
-							faelinestomp_usable = false
+							aoe_faelinestomp_usable = false
 						elseif chiburst_usable then
 							queue_spell = 123986
 							chiburst_usable = false
@@ -174,12 +267,12 @@ local function cofunc(yd)
 						spell_queue[#spell_queue+1] = queue_spell
 					end
 				else
-					local rjw_usable = is_spell_known_not_cooldown(116847)
+					local aoe_rjw_usable = rjw_usable
 					for i=1,aoe_grids_count do
 						local queue_spell = 100780
-						if rjw_usable and 0 < aoe_charges then
+						if aoe_rjw_usable and 0 < aoe_charges then
 							queue_spell = 116847
-							rjw_usable = false
+							aoe_rjw_usable = false
 							aoe_charges = aoe_charges - 1
 						elseif 2 < max_charges - aoe_charges and 80 < aoe_energy then
 						elseif aoe_strike_of_the_windlord_usable and 1 < aoe_charges then
@@ -219,8 +312,7 @@ local function cofunc(yd)
 						spell_queue[#spell_queue+1] = queue_spell
 					end
 				end
-
-				Peachpies_GridCenter(grids_profile,enemies_in_10y_count(),3,10,center_text5,"%d")
+				Peachpies_GridCenter(grids_profile,enemies_in_range_count(8),3,10,center_text5,"%d")
 				GridsQueueSpells(castspellId,castendTimeMS,spell_queue,backgrounds,cooldowns,single_target_grids_count,single_target_grids_count+aoe_grids_count-2)
 				globalframe:Show()
 			end
