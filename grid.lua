@@ -74,7 +74,7 @@ function Peachpies.CreateGrid(nameinfo,secure)
 	ct:SetPoint("Center", frme, "CENTER",0, 0)
 	local btmt = frme:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
 	btmt:SetPoint("Bottom", frme, "Bottom",0, 0)
-	grid_meta.buttom_text = btmt
+	grid_meta.bottom_text = btmt
 	local cd = CreateFrame("Cooldown", nil, frme, "CooldownFrameTemplate")
 	cd:SetHideCountdownNumbers(true)
 	grid_meta.cooldown = cd
@@ -82,7 +82,7 @@ function Peachpies.CreateGrid(nameinfo,secure)
 end
 
 function Peachpies.GridConfig(t,grid_meta)
-	local secure_frame = t.globalframe
+	local secure_frame = grid_meta.globalframe
 	if secure_frame:IsForbidden() then return end
 	local tb = t.grid
 	if tb == nil then
@@ -105,6 +105,7 @@ function Peachpies.GridConfig(t,grid_meta)
 	secure_frame:SetMovable(not tb.Lock)
 	secure_frame:EnableMouse(not tb.Lock)
 	secure_frame:SetSize(tb.Size,tb.Size)
+	secure_frame:ClearAllPoints()
 	secure_frame:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT",tb.Left,tb.Bottom)
 	grid_meta.center_text:SetFont(LSM:HashTable("font")[tb.CenterTextFont], tb.CenterTextSize, "OUTLINE")
 	grid_meta.bottom_text:SetFont(LSM:HashTable("font")[tb.BottomTextFont], tb.BottomTextSize, "OUTLINE")

@@ -73,7 +73,8 @@ function Peachpies_Options.set_func_color(info,r,g,b,a)
 	mrawset("G",g)
 	mrawset("B",b)
 	mrawset("A",a)
-	coroutine.resume(Peachpies[info[1]][id],0)
+	Peachpies_Options:SendMessage("Peachpies_OnProfileChanged")
+--	coroutine.resume(Peachpies[info[1]][id],0)
 end
 
 function Peachpies_Options.get_func_color(info)
@@ -124,6 +125,7 @@ function Peachpies_Options.GenerateB(key,name,b)
 	{
 		type = "group",
 		name = name,
-		args = gm
+		args = gm,
+		childGroups = "select"
 	}
 end

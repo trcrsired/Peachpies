@@ -46,7 +46,7 @@ function Peachpies.CreateBar(nameinfo)
 	local bar_meta = {}
 	Peachpies.AddComponentNameinfo("bar",bar_meta,nameinfo)
 	local frme = CreateFrame("Frame",nil,UIParent)
-	bar_meta.globalframe = frme
+	bar_meta.frame = frme
 	frme:Hide()
 	frme:SetFrameStrata("MEDIUM")
 	frme:SetClampedToScreen(true)
@@ -75,7 +75,7 @@ function Peachpies.BarConfig(t,bar_meta)
 		t.bar = tb
 	end
 	setmetatable(tb,default)
-	local frame = bar_meta.globalframe
+	local frame = bar_meta.frame
 	if tb.Enable then
 		frame:Show()
 	else

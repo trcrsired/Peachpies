@@ -200,7 +200,12 @@ function Peachpies.GridSpellMinitoring(tb,spellid,background,center_text,bottom_
 			if remain_time < 5 then
 				s = "%.1f"
 			end
-			Peachpies.GridCenter(tb,remain_time,5,10,center_text,s)
+			if remain_time >= 0 and gcd_duration ~= ap_duration then
+				Peachpies.GridCenter(tb,remain_time,5,10,center_text,s)
+				center_text:Show()
+			else
+				center_text:Hide()
+			end
 		else
 			center_text:Hide()
 		end

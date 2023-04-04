@@ -3,7 +3,6 @@ local Peachpies = LibStub("AceAddon-3.0"):GetAddon("Peachpies")
 local unit_range = Peachpies.unit_range
 local Peachpies_GridsSpellMinitoring = Peachpies.GridsSpellMonitoring
 local coyield = coroutine.yield
-local is_spell_known = Peachpies.is_spell_known
 local UnitPower = UnitPower
 local UnitPowerMax = UnitPowerMax
 local UnitCastingInfo = UnitCastingInfo
@@ -46,11 +45,11 @@ local function cofunc(yd)
 	local globalframe = grids_meta.globalframe
 	local backgrounds = grids_meta.backgrounds
 	local center_texts = grids_meta.center_texts
-	local bottom_texts = grids_meta.bottom_texts
+--	local bottom_texts = grids_meta.bottom_texts
 	local cooldowns = grids_meta.cooldowns
 	local grids_profile
 	local center_text1 = center_texts[1]
-	local bottom_text1 = bottom_texts[1]
+--	local bottom_text1 = bottom_texts[1]
 	local center_text5 = center_texts[5]
 	local specialization
 	local spell_queue = {}
