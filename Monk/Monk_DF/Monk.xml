@@ -2,6 +2,7 @@
 ..\FrameXML\UI.xsd">
 	<Script file="monk.lua"/>
 	<Script file="ReM.lua"/>
+	<Script file="Revival.lua"/>
 	<!--Script file="EF.lua"/>
 	<!Script file="Revival.lua"/>
 	<!Script file="RJW.lua"/-->

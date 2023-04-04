@@ -314,6 +314,8 @@ local function cofunc(yd)
 				Peachpies_GridCenter(grids_profile,enemies_in_range_count(8),3,10,center_text5,"%d")
 				GridsQueueSpells(castspellId,castendTimeMS,spell_queue,backgrounds,cooldowns,single_target_grids_count,single_target_grids_count+aoe_grids_count-2)
 				globalframe:Show()
+			else
+				globalframe:Hide()
 			end
 		end
 		yd=coyield()

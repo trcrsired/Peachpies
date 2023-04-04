@@ -57,7 +57,7 @@ Peachpies_Options.GenerateB("grid","Grid",
 		set = set_func,
 		get = get_func,
 	},
-	Size = 
+	Size =
 	{
 		name = "Size",
 		type = "range",

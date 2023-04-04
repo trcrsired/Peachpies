@@ -47,10 +47,20 @@ function Peachpies.CreateGrid(nameinfo,secure)
 	grid_meta.secure = secure
 	if secure then
 		local actionbutton = CreateFrame("CheckButton",nil,secure_frame,"SecureActionButtonTemplate")
-		actionbutton:SetAttribute("type","spell")
-		actionbutton:SetAttribute("spell",secure)
+		local securetype = type(secure)
+		if securetype == "number" then
+			actionbutton:SetAttribute("type","spell")
+			actionbutton:SetAttribute("spell",secure)
+		elseif securetype == "string" then
+			actionbutton:SetAttribute("type","macro")
+			actionbutton:SetAttribute("macrotext",secure)
+		elseif securetype == "table" then
+			for k,v in pairs(secure) do
+				actionbutton:SetAttribute(k,v)
+			end
+		end
 		actionbutton:SetMouseClickEnabled(true)
-		actionbutton:RegisterForClicks("LeftButtonUp", "LeftButtonDown")
+		actionbutton:RegisterForClicks("anyUp", "anyDown")
 		actionbutton:SetAllPoints(secure_frame)
 		actionbutton:SetFrameStrata("BACKGROUND")
 		grid_meta.actionbutton = actionbutton
