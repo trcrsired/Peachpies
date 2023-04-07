@@ -65,12 +65,21 @@ function Peachpies.CreateGrids(nameinfo,singleregions,aoeregions,buffregions)
 	local n = 0
 	local m
 	local p
+	if singleregions == 0 then
+		singleregions = nil
+	end
 	if singleregions then
 		n = n + singleregions
+	end
+	if aoeregions == 0 then
+		aoeregions = nil
 	end
 	if aoeregions then
 		p = n + 1
 		n = n + aoeregions
+	end
+	if buffregions == 0 then
+		buffregions = nil
 	end
 	if buffregions then
 		m = n + 1
@@ -145,6 +154,8 @@ function Peachpies.GridsConfig(db,grids_meta)
 		if aoeregions then
 			p = n + 1
 			n = n + aoeregions
+		else
+			p = -1
 		end
 		m = n + 1
 		if buffregions then

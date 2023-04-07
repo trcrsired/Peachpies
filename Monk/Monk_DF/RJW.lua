@@ -15,6 +15,7 @@ nameplates = true,
 constant = 2.777,
 manacost = 5,
 specialization = 2,
+nameplate = true,
 spells = 196725
 }
 )))
