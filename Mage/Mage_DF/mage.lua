@@ -19,7 +19,7 @@ local UnitAura = UnitAura
 local GridsQueueSpells = Peachpies.GridsQueueSpells
 local wipe = wipe
 local math_floor = math.floor
-local enemies_in_10y_count = Peachpies.enemies_in_10y_count
+local enemies_in_range_count = Peachpies.enemies_in_range_count
 
 local monitored_spells =
 {
@@ -280,7 +280,7 @@ local function cofunc(yd)
 --					Peachpies_GridCenter(grids_profile,arcane_explosion_count,3,10,center_text5,"%d")
 					GridsQueueSpells(castspellId,castendTimeMS,spell_queue,backgrounds,cooldowns,1,single_target_grids_count-1)
 				end
-				local arcane_explosion_count = enemies_in_10y_count()
+				local arcane_explosion_count = enemies_in_range_count(10)
 				wipe(spell_queue)
 				local nether_tempest_usable = is_spell_known(114923)
 				local blizzard_usable = is_spell_known_not_cooldown(190356)
