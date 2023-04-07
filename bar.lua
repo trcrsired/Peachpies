@@ -102,6 +102,9 @@ function Peachpies.BarConfig(t,bar_meta)
 end
 
 function Peachpies.BarSet(tb,current,maxval,bar_meta)
+	if maxval == 0 then
+		return
+	end
 	local percent = current/maxval
 	bar_meta.percentage_text:SetText(("%.0f%%"):format(100*percent))
 	bar_meta.amount_text:SetText(("%.0f"):format(current))
