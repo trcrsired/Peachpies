@@ -20,6 +20,11 @@ local GridsQueueSpells = Peachpies.GridsQueueSpells
 local wipe = wipe
 local math_floor = math.floor
 local enemies_in_range_count = Peachpies.enemies_in_range_count
+local GetMasteryEffect = GetMasteryEffect
+local UnitHealthMax = UnitHealthMax
+local UnitExists = UnitExists
+local UnitHealth = UnitHealth
+--local UnitIsPlayer = UnitIsPlayer
 
 local monitored_spells =
 {
@@ -103,18 +108,31 @@ local function cofunc(yd)
 				local ice_lance_known = is_spell_known(30455)
 				local flurry_known = is_spell_known(44614)
 				if specialization == 1 then
---[[
+
 					local mana = UnitPower("player", 0)
 					local max_mana = UnitPowerMax("player", 0)
+
 					local val = GetMasteryEffect()/100 + 1
 					local mana_no_master = max_mana/val
+
 					local percentage = mana / mana_no_master
+
 					local chargemana =  max_charges * (max_charges + 1) * 0.01375
+--[[
 					local starttime = GetTime()
 					local current_time = starttime
 					local haste_effect = 1 + GetHaste()/100
 					local real_gcd_val = 1.5 / haste_effect
 ]]
+					local killing_mode
+					if UnitExists("target") then
+						local playerhealthmax = UnitHealthMax("player")
+						local targethealth = UnitHealth("target")
+						local dividemax = playerhealthmax * 0.8
+						if targethealth < dividemax and percentage > 0.5 then
+							killing_mode = true
+						end
+					end
 					local arcane_harmony_stacks = 0
 					local max_arcane_harmony_stacks = 20
 					local suggest_min_arcane_harmony_stacks = 12
@@ -205,7 +223,7 @@ local function cofunc(yd)
 							if has_clearcasting then
 								thisroundspell = 5143
 								has_clearcasting = false
-							elseif arcane_barrage_usable then
+							elseif not killing_mode and arcane_barrage_usable then
 								thisroundspell = 44425
 							end
 						end
@@ -217,7 +235,7 @@ local function cofunc(yd)
 							single_charages = 0
 						end
 						if max_charges < single_charages then
-							single_charages = max_charges 
+							single_charages = max_charges
 						end
 						spell_queue[i]=thisroundspell
 					end
