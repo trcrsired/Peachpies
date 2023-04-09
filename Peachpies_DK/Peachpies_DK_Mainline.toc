@@ -1,0 +1,7 @@
+## Interface: 100007
+## Author: cqwrteur
+## Title: Peachpies Death Knight
+## LoadOnDemand: 1
+## X-PEACHPIES-CLASS: 6
+
+DK_DF/deathknight.lua
