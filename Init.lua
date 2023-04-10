@@ -245,6 +245,18 @@ local is_spell_known = Peachpies.is_spell_known
 
 local GetSpellCooldown = GetSpellCooldown
 
+local function is_spell_not_cooldown(spellid)
+	local start, duration, enabled, modRate = GetSpellCooldown(spellid)
+
+	local _, gcd_duration = GetSpellCooldown(61304)
+	if duration == gcd_duration or duration == 0 then
+		return true
+	end
+	return false
+end
+
+Peachpies.is_spell_not_cooldown = is_spell_not_cooldown
+
 local function is_spell_known_not_cooldown(spellid)
 	if not is_spell_known(spellid) then
 		return nil
