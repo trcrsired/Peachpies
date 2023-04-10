@@ -183,6 +183,9 @@ function Peachpies.GridsConfig(db,grids_meta)
 end
 
 function Peachpies.GridCenter(tb,count,L,M,center_text,format)
+	if count == nil then
+		center_text:Hide()
+	end
 	if count < L then
 		center_text:SetTextColor(tb.HighColorR,tb.HighColorG,tb.HighColorB,tb.HighColorA)
 	elseif count < M then
@@ -195,9 +198,15 @@ function Peachpies.GridCenter(tb,count,L,M,center_text,format)
 	else
 		center_text:SetText(count)
 	end
+	center_text:Show()
 end
 
 local is_spell_known = Peachpies.is_spell_known
+
+
+local GetSpellTexture = GetSpellTexture
+local GetSpellCooldown = GetSpellCooldown
+local GetTime = GetTime
 
 function Peachpies.GridSpellMinitoring(tb,spellid,background,center_text,bottom_text,cooldown)
 	if is_spell_known(spellid) then
@@ -254,10 +263,6 @@ function Peachpies.GridsSpellMonitoring(grid_profile,grids_meta,monitoredspells)
 
 	end
 end
-
-local GetSpellTexture = GetSpellTexture
-local GetSpellCooldown = GetSpellCooldown
-local GetTime = GetTime
 
 function Peachpies.GridsQueueSpells(castingspellid,castendTimeMS,castingqueue,backgrounds,cooldowns,bgi,edi)
 	local castingqueue1 = castingqueue[1]

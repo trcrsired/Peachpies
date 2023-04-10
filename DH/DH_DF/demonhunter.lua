@@ -67,10 +67,7 @@ local function cofunc(yd)
 		else
 			local player_self = UnitIsUnit("player","target")
 			if UnitAffectingCombat("player") or (not player_self and UnitIsVisible("target")) then
-				local t = unit_range("target")
-				if t then
-					Peachpies_GridCenter(grids_profile,t,10,43,center_text1,"%d")
-				end
+				Peachpies_GridCenter(grids_profile,unit_range("target"),10,43,center_text1)
 				Peachpies_GridsSpellMinitoring(grids_profile,grids_meta,monitor_spells)
 				local fury_val = UnitPower("player", 17)
 				local max_fury = UnitPowerMax("player", 17)
