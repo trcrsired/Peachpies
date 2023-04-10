@@ -123,10 +123,11 @@ local function cofunc(yd)
 					end
 				end
 				local effective_count = 3
-				if visible_count < effective_count then
-					effective_count = visible_count
+				local max_effective_count = 6
+				if 6 < visible_count then
+					effective_count = 6
+					max_effective_count = visible_count
 				end
-				local max_effective_count = effective_count * 2
 				Peachpies_GridCenter(grids_profile,virulent_count,effective_count,max_effective_count,center_text5)
 				bottom_text5:SetText(visible_count)
 				local outbreak_usable = is_spell_known_not_cooldown(77575)
