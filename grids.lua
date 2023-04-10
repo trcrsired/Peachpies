@@ -185,6 +185,7 @@ end
 function Peachpies.GridCenter(tb,count,L,M,center_text,format)
 	if count == nil then
 		center_text:Hide()
+		return
 	end
 	if count < L then
 		center_text:SetTextColor(tb.HighColorR,tb.HighColorG,tb.HighColorB,tb.HighColorA)
