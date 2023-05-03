@@ -1,0 +1,17 @@
+{
+	"Lua.diagnostics.globals": [
+		"nop",
+		"DAMAGER",
+		"ENABLE",
+		"LOCK",
+		"FONT_SIZE",
+		"TOTAL",
+		"COMPACT_UNIT_FRAME_PROFILE_FRAMEWIDTH",
+		"COMPACT_UNIT_FRAME_PROFILE_FRAMEHEIGHT",
+		"LOW",
+		"HIGH",
+		"STATUS_TEXT",
+		"BACKGROUND",
+		"PLAYER_DIFFICULTY1"
+	]
+}
