@@ -56,6 +56,9 @@ local function cofunc(yd)
 		repeat
 		if yd == 0 then
 			specialization = GetSpecialization()
+			if specialization == 5 then
+				specialization = 1
+			end
 			monitor_spells = monitored_spells[specialization]
 			grids_profile = Peachpies.GridsConfig(Peachpies.GetProfile(),grids_meta)
 			if grids_profile.Enable then
