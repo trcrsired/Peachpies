@@ -154,7 +154,7 @@ local function cofunc(yd)
 						elseif 0 < symbolsofdeath_charges then
 							roundspellid = 212283
 							symbolsofdeath_charges = symbolsofdeath_charges - 1
-						elseif andenalinerush and 50 <= energy_val and combopoints_val <= 2 then
+						elseif andenalinerush and 50 <= energy_val then
 							roundspellid = 13750
 							andenalinerush = false
 							energy_val = energy_val - 50
