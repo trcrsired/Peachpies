@@ -28,7 +28,7 @@ local monitored_spells =
 },
 --Outlaw
 {
-114018
+381989,114018
 },
 --Subtlety
 {
@@ -42,18 +42,17 @@ local is_spell_known_not_cooldown = Peachpies.is_spell_known_not_cooldown
 
 local function cofunc(yd)
 	local monitor_spells
-	local single_target_grids_count = 5
+	local single_target_grids_count = 6
 	local aoe_grids_count = 5
 	local grids_meta = Peachpies.CreateGrids(nil,single_target_grids_count,aoe_grids_count,to_monitored_buffs)
 	local globalframe = grids_meta.globalframe
 	local backgrounds = grids_meta.backgrounds
 	local center_texts = grids_meta.center_texts
-	local bottom_texts = grids_meta.bottom_texts
+--	local bottom_texts = grids_meta.bottom_texts
 	local cooldowns = grids_meta.cooldowns
 	local grids_profile
 	local center_text1 = center_texts[1]
-	local bottom_text1 = bottom_texts[1]
-	local center_text5 = center_texts[5]
+	local center_text5 = center_texts[single_target_grids_count]
 	local specialization
 	local spell_queue = {}
 	while true do
@@ -83,7 +82,7 @@ local function cofunc(yd)
 				local realgcd_duration = 1.5/hasteeffect
 				local energy_increase_per_gcd = energy_increase_per_sec / realgcd_duration
 				for isaoe=1,2 do
-					local has_combat_effect = false
+					local has_combat_effect = 0
 					local has_sliceanddice = false
 					local has_opportunity = false
 					local has_stealth_or_vanish = false
@@ -110,25 +109,35 @@ local function cofunc(yd)
 					local combopoints_val = UnitPower("player", 4)
 					local combopoints_max = UnitPowerMax("player", 4)
 
-					local andenaline = is_spell_known_not_cooldown(13750)
+					local andenalinerush = is_spell_known_not_cooldown(13750)
 					local rollthebones = is_spell_known_not_cooldown(315508)
---					local keepitrolling = is_spell_known_not_cooldown(381989)
+					local keepitrolling = is_spell_known_not_cooldown(381989)
 					local betweeneyes = is_spell_known_not_cooldown(315341)
 					local sliceanddice = is_spell_known_not_cooldown(315496)
 					local bladeflurry = is_spell_known_not_cooldown(13877)
 					local dispatch = true
 					local pistolshot = is_spell_known_not_cooldown(185763)
+					local coldblood = is_spell_known_not_cooldown(382245)
+					local markofdeath = is_spell_known_not_cooldown(137619)
 					local vanish = is_spell_known(1856)
 					local vanishcharges = 0
 					if vanish then
 						vanishcharges = GetSpellCharges(1856)
 					end
+					local thistleteacharges = 0
+					if is_spell_known(381623) then
+						thistleteacharges = GetSpellCharges(381623)
+					end
+					local symbolsofdeath_charges = 0
+					if is_spell_known(212283) then
+						symbolsofdeath_charges = GetSpellCharges(212283)
+					end
 					local rounds = 5
 					local start_grid,end_grid
 					if isaoe == 1 then
-						rounds = single_target_grids_count
+						rounds = single_target_grids_count - 1
 						start_grid = 1
-						end_grid = single_target_grids_count - 1
+						end_grid = single_target_grids_count - 2
 					else
 						rounds = aoe_grids_count
 						start_grid = single_target_grids_count
@@ -142,15 +151,24 @@ local function cofunc(yd)
 							roundspellid = 8676
 							energy_val = energy_val - 50
 							has_stealth_or_vanish = false
-						elseif andenaline and 50 <= energy_val and 2 <= combopoints_val then
+						elseif 0 < symbolsofdeath_charges then
+							roundspellid = 212283
+							symbolsofdeath_charges = symbolsofdeath_charges - 1
+						elseif andenalinerush and 50 <= energy_val and combopoints_val <= 2 then
 							roundspellid = 13750
-							andenaline = false
+							andenalinerush = false
 							energy_val = energy_val - 50
-						elseif rollthebones and 25 <= energy_val and not has_combat_effect then
+						elseif rollthebones and 25 <= energy_val and has_combat_effect == 0 then
 							roundspellid = 315508
 							rollthebones = false
-							has_combat_effect = true
+							has_combat_effect = 1
 							energy_val = energy_val - 25
+						elseif keepitrolling and has_combat_effect >= 3 then
+							roundspellid = 381989
+							keepitrolling = false
+						elseif 0 < thistleteacharges and energy_val <= 50 then
+							thistleteacharges = thistleteacharges - 1
+							energy_val = energy_val + 100
 						elseif isaoe == 2 and bladeflurry and has_blade_flurry == nil then
 							roundspellid = 13877
 							energy_val = energy_val - 15
@@ -172,6 +190,13 @@ local function cofunc(yd)
 							roundspellid = 2098
 							energy_val = energy_val - 32
 							combopoints_val = 0
+						elseif coldblood then
+							roundspellid = 382245
+							coldblood = false
+						elseif markofdeath and combopoints_val < 2 then
+							roundspellid = 137619
+							combopoints_val = combopoints_val + 5
+							markofdeath = false
 						elseif 0 < vanishcharges and 0 < combatpoints_remain then
 							vanishcharges = vanishcharges - 1
 							has_stealth_or_vanish = true
