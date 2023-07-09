@@ -115,7 +115,7 @@ local function cofunc(yd)
 					local betweeneyes = is_spell_known_not_cooldown(315341)
 					local sliceanddice = is_spell_known_not_cooldown(315496)
 					local bladeflurry = is_spell_known_not_cooldown(13877)
-					local dispatch = true
+					local dispatch = specialization == 2
 					local pistolshot = is_spell_known_not_cooldown(185763)
 					local coldblood = is_spell_known_not_cooldown(382245)
 					local markofdeath = is_spell_known_not_cooldown(137619)
