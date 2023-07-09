@@ -1,0 +1,7 @@
+## Interface: 100100
+## Author: cqwrteur
+## Title: Peachpies Rogue
+## LoadOnDemand: 1
+## X-PEACHPIES-CLASS: 4
+
+Rogue_DF/rogue.lua
