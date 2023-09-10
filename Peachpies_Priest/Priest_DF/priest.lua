@@ -33,7 +33,7 @@ local monitored_spells =
 10060,19236,47788,64901,64843
 },
 {
-200174,10060,391105
+391109,10060,391105
 }
 }
 
@@ -108,6 +108,7 @@ local function cofunc(yd)
 					local divinestar = is_spell_known_not_cooldown(122121)
 					local mindgames = is_spell_known_not_cooldown(375901)
 					local devouringplague = is_spell_known(335467)
+					local voidtorrent = is_spell_known_not_cooldown(263165)
 					local mindblastacharges = 0
 					if is_spell_known(8092) then
 						mindblastacharges = GetSpellCharges(8092)
@@ -137,7 +138,7 @@ local function cofunc(yd)
 							if not applied_buff_list[232698] then
 								roundspellid = 232698
 								applied_buff_list[232698] = true
-							elseif shadowcrash and isaoe==2 then
+							elseif shadowcrash then
 								roundspellid = 205385
 								shadowcrash = false
 								applied_debuff_list[34914] = true
@@ -170,6 +171,10 @@ local function cofunc(yd)
 						if 45 <= insanity and devouringplague then
 							roundspellid = 335467
 							devouringplague = false
+						end
+						if roundspellid == 585 and voidtorrent then
+							roundspellid = 263165
+							voidtorrent = false
 						end
 						if roundspellid == 585 and 0 < shadowworddeathcharges then
 							shadowworddeathcharges = shadowworddeathcharges - 1
