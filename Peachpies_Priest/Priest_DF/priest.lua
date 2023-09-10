@@ -115,6 +115,7 @@ local function cofunc(yd)
 					local mindgames = is_spell_known_not_cooldown(375901)
 					local devouringplague = is_spell_known(335467)
 					local voidtorrent = is_spell_known_not_cooldown(263165)
+					local penance = is_spell_known_not_cooldown(47540)
 					local mindblastacharges = 0
 					if is_spell_known(8092) then
 						mindblastacharges = GetSpellCharges(8092)
@@ -137,6 +138,9 @@ local function cofunc(yd)
 					for k,v in pairs(debuff_list) do
 						applied_debuff_list[k] = v
 						--[[print(k,UnitAura("target",v,"PLAYER|HARMFUL"))]]
+					end
+					if applied_debuff_list[204213] then
+						applied_debuff_list[589] = true
 					end
 					local roundnotpowerwordfortitude = powerwordfortitude and notpowerwordfortitude
 					for i=1,rounds do
@@ -163,6 +167,10 @@ local function cofunc(yd)
 									applied_debuff_list[34914] = true
 									applied_debuff_list[589] = true
 								end
+							end
+							if penance and roundspellid == 585 then
+								roundspellid = 47540
+								penance = false
 							end
 							if isaoe == 2 and roundspellid == 585 then
 								if halo then
