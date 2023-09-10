@@ -306,3 +306,22 @@ function Peachpies.enemies_in_range_count(range)
 	end
 	return count
 end
+
+function Peachpies.AurasList(tb,auras,unit,filter)
+	if tb == nil then
+		tb = {}
+	end
+	wipe(tb)
+	local gtime = GetTime()
+	for i=1,100 do
+		local name, icon, count, debuffType, duration, expirationTime, source, isStealable,
+		nameplateShowPersonal, spellId = UnitAura(unit,i,filter)
+		if name == nil then
+			break
+		end
+		if (expirationTime == 0 or gtime <= expirationTime) and (auras == nil or auras[spellId]) then
+			tb[spellId] = i
+		end
+	end
+	return tb
+end
