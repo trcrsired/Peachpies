@@ -88,6 +88,8 @@ local function cofunc(yd)
 					wipe(spell_queue)
 					wipe(applied_buff_list)
 					wipe(applied_debuff_list)
+					local insanity = UnitPower("player",13)
+					local insanitymax = UnitPowerMax("player",13)
 					local rounds = 5
 					local start_grid,end_grid
 					if isaoe == 1 then
@@ -104,6 +106,8 @@ local function cofunc(yd)
 					local shadowwordpain = is_spell_known_not_cooldown(589)
 					local halo = is_spell_known_not_cooldown(120644)
 					local divinestar = is_spell_known_not_cooldown(122121)
+					local mindgames = is_spell_known_not_cooldown(375901)
+					local devouringplague = is_spell_known(335467)
 					local mindblastacharges = 0
 					if is_spell_known(8092) then
 						mindblastacharges = GetSpellCharges(8092)
@@ -163,15 +167,29 @@ local function cofunc(yd)
 							mindblastacharges = 0
 							roundspellid = 8092
 						end
-						if roundspellid == 585 and 0 < mindblastacharges then
-							mindblastacharges = mindblastacharges - 1
-							roundspellid = 8092
+						if 45 <= insanity and devouringplague then
+							roundspellid = 335467
+							devouringplague = false
 						end
 						if roundspellid == 585 and 0 < shadowworddeathcharges then
 							shadowworddeathcharges = shadowworddeathcharges - 1
 							roundspellid = 32379
 						end
+						if roundspellid == 585 and 0 < mindblastacharges then
+							mindblastacharges = mindblastacharges - 1
+							roundspellid = 8092
+						end
+						if roundspellid == 585 and mindgames then
+							roundspellid = 375901
+							mindgames = false
+						end
 						spell_queue[#spell_queue+1]=roundspellid
+						if insanity > insanitymax then
+							insanity = insanitymax
+						end
+						if insanity < 0 then
+							insanity = 0
+						end
 					end
 					Peachpies_GridCenter(grids_profile,enemies_in_range_count(30),3,10,center_text5,"%d")
 					local castname, casttext, casttexture, caststartTimeMS, castendTimeMS, castisTradeSkill, castcastID, castnotInterruptible, castspellId = UnitCastingInfo("player")
