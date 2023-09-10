@@ -107,9 +107,6 @@ local function cofunc(yd)
 					local mindblastacharges = 0
 					if is_spell_known(8092) then
 						mindblastacharges = GetSpellCharges(8092)
-						if buff_list[375981] then
-							mindblastacharges = mindblastacharges + 1
-						end
 					end
 					local shadowworddeathcharges = 0
 					if is_spell_known(32379) then
@@ -139,7 +136,9 @@ local function cofunc(yd)
 							elseif shadowcrash and isaoe==2 then
 								roundspellid = 205385
 								shadowcrash = false
-							elseif vampirictouch and (not applied_debuff_list[34914] or applied_debuff_list[589]) then
+								applied_debuff_list[34914] = true
+								applied_debuff_list[589] = true
+							elseif vampirictouch and (not applied_debuff_list[34914] or not applied_debuff_list[589]) then
 								roundspellid = 34914
 								vampirictouch = false
 								applied_debuff_list[34914] = true
@@ -159,6 +158,11 @@ local function cofunc(yd)
 							roundspellid = 589
 							applied_debuff_list[589] = true
  						end
+						if applied_buff_list[375981] then
+							applied_buff_list[375981] = true
+							mindblastacharges = 0
+							roundspellid = 8092
+						end
 						if roundspellid == 585 and 0 < mindblastacharges then
 							mindblastacharges = mindblastacharges - 1
 							roundspellid = 8092
