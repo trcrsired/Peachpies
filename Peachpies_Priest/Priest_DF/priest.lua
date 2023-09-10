@@ -79,7 +79,7 @@ local function cofunc(yd)
 		else
 			local player_self = UnitIsUnit("player","target")
 			Peachpies_AurasList(buff_list,nil,"player","PLAYER|HELPFUL")
-			local powerwordfortitude = IsSpellKnown(21562)
+			local powerwordfortitude = 6 <= UnitLevel("player")
 			local incombat = UnitAffectingCombat("player") or (not player_self and UnitIsVisible("target"))
 			local notpowerwordfortitude = not buff_list[21562]
 			if incombat or (powerwordfortitude and not buff_list[21562]) then
