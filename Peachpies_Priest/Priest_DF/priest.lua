@@ -33,7 +33,7 @@ local monitored_spells =
 10060,19236,47788,64901,64843
 },
 {
-391109,10060,391105
+391109,10060,200174
 }
 }
 
@@ -78,10 +78,13 @@ local function cofunc(yd)
 			break
 		else
 			local player_self = UnitIsUnit("player","target")
-			if UnitAffectingCombat("player") or (not player_self and UnitIsVisible("target")) then
+			Peachpies_AurasList(buff_list,nil,"player","PLAYER|HELPFUL")
+			local powerwordfortitude = IsSpellKnown(21562)
+			local incombat = UnitAffectingCombat("player") or (not player_self and UnitIsVisible("target"))
+			local notpowerwordfortitude = not buff_list[21562]
+			if incombat or (powerwordfortitude and not buff_list[21562]) then
 				Peachpies_GridCenter(grids_profile,unit_range("target"),10,43,center_text1)
 				Peachpies_GridsSpellMinitoring(grids_profile,grids_meta,monitor_spells)
-				Peachpies_AurasList(buff_list,nil,"player","PLAYER|HELPFUL")
 				Peachpies_AurasList(debuff_list,nil,"target","PLAYER|HARMFUL")
 				local gtime = GetTime()
 				for isaoe=1,2 do
@@ -132,61 +135,70 @@ local function cofunc(yd)
 						applied_debuff_list[k] = v
 						--[[print(k,UnitAura("target",v,"PLAYER|HARMFUL"))]]
 					end
+					local roundnotpowerwordfortitude = notpowerwordfortitude
 					for i=1,rounds do
 						local roundspellid = 585
-						if specialization == 3  then
-							if not applied_buff_list[232698] then
-								roundspellid = 232698
-								applied_buff_list[232698] = true
-							elseif shadowcrash then
-								roundspellid = 205385
-								shadowcrash = false
-								applied_debuff_list[34914] = true
-								applied_debuff_list[589] = true
-							elseif vampirictouch and (not applied_debuff_list[34914] or not applied_debuff_list[589]) then
-								roundspellid = 34914
-								vampirictouch = false
-								applied_debuff_list[34914] = true
-								applied_debuff_list[589] = true
+						if roundnotpowerwordfortitude then
+							roundspellid = 21562
+							if incombat then
+								roundnotpowerwordfortitude = false
 							end
 						end
-						if isaoe == 2 and roundspellid == 585 then
-							if halo then
-								roundspellid = 120644
-								halo = false
-							elseif divinestar then
-								roundspellid = 122121
-								divinestar = false
+						if incombat and roundspellid == 585 then
+							if specialization == 3  then
+								if not applied_buff_list[232698] then
+									roundspellid = 232698
+									applied_buff_list[232698] = true
+								elseif shadowcrash then
+									roundspellid = 205385
+									shadowcrash = false
+									applied_debuff_list[34914] = true
+									applied_debuff_list[589] = true
+								elseif vampirictouch and (not applied_debuff_list[34914] or not applied_debuff_list[589]) then
+									roundspellid = 34914
+									vampirictouch = false
+									applied_debuff_list[34914] = true
+									applied_debuff_list[589] = true
+								end
 							end
-						end
-						if roundspellid == 585 and shadowwordpain and not applied_debuff_list[589] then
-							roundspellid = 589
-							applied_debuff_list[589] = true
- 						end
-						if applied_buff_list[375981] then
-							applied_buff_list[375981] = true
-							mindblastacharges = 0
-							roundspellid = 8092
-						end
-						if 45 <= insanity and devouringplague then
-							roundspellid = 335467
-							devouringplague = false
-						end
-						if roundspellid == 585 and voidtorrent then
-							roundspellid = 263165
-							voidtorrent = false
-						end
-						if roundspellid == 585 and 0 < shadowworddeathcharges then
-							shadowworddeathcharges = shadowworddeathcharges - 1
-							roundspellid = 32379
-						end
-						if roundspellid == 585 and 0 < mindblastacharges then
-							mindblastacharges = mindblastacharges - 1
-							roundspellid = 8092
-						end
-						if roundspellid == 585 and mindgames then
-							roundspellid = 375901
-							mindgames = false
+							if isaoe == 2 and roundspellid == 585 then
+								if halo then
+									roundspellid = 120644
+									halo = false
+								elseif divinestar then
+									roundspellid = 122121
+									divinestar = false
+								end
+							end
+							if roundspellid == 585 and shadowwordpain and not applied_debuff_list[589] then
+								roundspellid = 589
+								applied_debuff_list[589] = true
+							end
+							if applied_buff_list[375981] then
+								applied_buff_list[375981] = true
+								mindblastacharges = 0
+								roundspellid = 8092
+							end
+							if 45 <= insanity and devouringplague then
+								roundspellid = 335467
+								devouringplague = false
+							end
+							if roundspellid == 585 and voidtorrent then
+								roundspellid = 263165
+								voidtorrent = false
+							end
+							if roundspellid == 585 and 0 < shadowworddeathcharges then
+								shadowworddeathcharges = shadowworddeathcharges - 1
+								roundspellid = 32379
+							end
+							if roundspellid == 585 and 0 < mindblastacharges then
+								mindblastacharges = mindblastacharges - 1
+								roundspellid = 8092
+							end
+							if roundspellid == 585 and mindgames then
+								roundspellid = 375901
+								mindgames = false
+							end
 						end
 						spell_queue[#spell_queue+1]=roundspellid
 						if insanity > insanitymax then
