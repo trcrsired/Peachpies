@@ -91,7 +91,7 @@ function Peachpies.CreateGrids(nameinfo,singleregions,aoeregions,buffregions)
 	grids_meta.n = n
 	for i=1,n do
 		local frme = CreateFrame("Frame",nil,globalframe)
-		local point, relativeFrame, relativePoint
+		local point, relativeFrame, relativePoint, ofsx, ofsy
 		if i == 1 then
 			point = "BOTTOMLEFT"
 			relativeFrame = globalframe
@@ -108,8 +108,12 @@ function Peachpies.CreateGrids(nameinfo,singleregions,aoeregions,buffregions)
 			point = "BOTTOMLEFT"
 			relativeFrame = frame_tbls[i-1]
 			relativePoint = "BOTTOMRIGHT"
+			if p and i == p - 1 then
+				ofsx = 5
+				ofsy = 0
+			end
 		end
-		frme:SetPoint(point,relativeFrame,relativePoint)
+		frme:SetPoint(point,relativeFrame,relativePoint,ofsx, ofsy)
 		frame_tbls[i] = frme
 		local b =  frme : CreateTexture(nil, "BACKGROUND")
 		b:SetAllPoints(frme)
