@@ -27,7 +27,7 @@ local UnitHealthMax = UnitHealthMax
 local monitored_spells =
 {
 {
-
+271486
 },
 {
 10060,19236,47788,64901,64843
@@ -37,7 +37,7 @@ local monitored_spells =
 }
 }
 
-local buffauralist = {21562}
+local buffauralist = {[21562]=true}
 
 local to_monitored_buffs = Peachpies.monitor_spells_maximum(monitored_spells)
 
@@ -84,7 +84,8 @@ local function cofunc(yd)
 			local powerwordfortitude = 6 <= UnitLevel("player")
 			local incombat = UnitAffectingCombat("player") or (not player_self and UnitIsVisible("target"))
 			local notpowerwordfortitude = not buff_list[21562]
-			if incombat or (powerwordfortitude and not buff_list[21562]) then
+			print(buff_list[21562])
+			if incombat or (powerwordfortitude and notpowerwordfortitude) then
 				Peachpies_GridCenter(grids_profile,unit_range("target"),10,43,center_text1)
 				Peachpies_GridsSpellMinitoring(grids_profile,grids_meta,monitor_spells)
 				Peachpies_AurasList(buff_list,nil,"player","PLAYER|HELPFUL")
