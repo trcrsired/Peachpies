@@ -84,7 +84,6 @@ local function cofunc(yd)
 			local powerwordfortitude = 6 <= UnitLevel("player")
 			local incombat = UnitAffectingCombat("player") or (not player_self and UnitIsVisible("target"))
 			local notpowerwordfortitude = not buff_list[21562]
-			print(buff_list[21562])
 			if incombat or (powerwordfortitude and notpowerwordfortitude) then
 				Peachpies_GridCenter(grids_profile,unit_range("target"),10,43,center_text1)
 				Peachpies_GridsSpellMinitoring(grids_profile,grids_meta,monitor_spells)
