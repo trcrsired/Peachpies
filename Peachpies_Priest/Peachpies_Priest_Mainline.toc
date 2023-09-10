@@ -1,0 +1,7 @@
+## Interface: 100107
+## Author: cqwrteur
+## Title: Peachpies Priest
+## LoadOnDemand: 1
+## X-PEACHPIES-CLASS: 5
+
+Priest_DF/priest.lua

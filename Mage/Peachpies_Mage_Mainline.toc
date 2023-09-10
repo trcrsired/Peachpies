@@ -1,4 +1,4 @@
-## Interface: 100105
+## Interface: 100107
 ## Author: cqwrteur
 ## Title: Peachpies Mage
 ## LoadOnDemand: 1
