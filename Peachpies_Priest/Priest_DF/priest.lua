@@ -37,6 +37,8 @@ local monitored_spells =
 }
 }
 
+local buffauralist = {21562}
+
 local to_monitored_buffs = Peachpies.monitor_spells_maximum(monitored_spells)
 
 local is_spell_known_not_cooldown = Peachpies.is_spell_known_not_cooldown
@@ -78,13 +80,14 @@ local function cofunc(yd)
 			break
 		else
 			local player_self = UnitIsUnit("player","target")
-			Peachpies_AurasList(buff_list,nil,"player","PLAYER|HELPFUL")
+			Peachpies_AurasList(buff_list,buffauralist,"player","HELPFUL")
 			local powerwordfortitude = 6 <= UnitLevel("player")
 			local incombat = UnitAffectingCombat("player") or (not player_self and UnitIsVisible("target"))
 			local notpowerwordfortitude = not buff_list[21562]
 			if incombat or (powerwordfortitude and not buff_list[21562]) then
 				Peachpies_GridCenter(grids_profile,unit_range("target"),10,43,center_text1)
 				Peachpies_GridsSpellMinitoring(grids_profile,grids_meta,monitor_spells)
+				Peachpies_AurasList(buff_list,nil,"player","PLAYER|HELPFUL")
 				Peachpies_AurasList(debuff_list,nil,"target","PLAYER|HARMFUL")
 				local gtime = GetTime()
 				for isaoe=1,2 do
@@ -135,7 +138,7 @@ local function cofunc(yd)
 						applied_debuff_list[k] = v
 						--[[print(k,UnitAura("target",v,"PLAYER|HARMFUL"))]]
 					end
-					local roundnotpowerwordfortitude = notpowerwordfortitude
+					local roundnotpowerwordfortitude = powerwordfortitude and notpowerwordfortitude
 					for i=1,rounds do
 						local roundspellid = 585
 						if roundnotpowerwordfortitude then
