@@ -63,6 +63,8 @@ local function cofunc(yd)
 	local aoe_spell_queue = {}
 	local buff_list,debuff_list = {},{}
 	local applied_buff_list,applied_debuff_list = {},{}
+	local halospellid = 120517
+	local divinestarspellid = 110744
 	while true do
 		repeat
 		if yd == 0 then
@@ -76,6 +78,13 @@ local function cofunc(yd)
 				yd=coyield(2)
 			else
 				yd=coyield()
+			end
+			if specialization == 3 then
+				halospellid = 120644
+				divinestarspellid = 110744
+			else
+				halospellid = 120517
+				divinestarspellid = 122121
 			end
 			break
 		else
@@ -110,14 +119,17 @@ local function cofunc(yd)
 					local shadowcrash = is_spell_known_not_cooldown(205385)
 					local vampirictouch = is_spell_known_not_cooldown(34914)
 					local shadowwordpain = is_spell_known_not_cooldown(589)
-					local halo = is_spell_known_not_cooldown(120644)
-					local divinestar = is_spell_known_not_cooldown(122121)
+					local halo = is_spell_known_not_cooldown(halospellid)
+					local divinestar = is_spell_known_not_cooldown(divinestarspellid)
 					local mindgames = is_spell_known_not_cooldown(375901)
 					local devouringplague = is_spell_known(335467)
 					local voidtorrent = is_spell_known_not_cooldown(263165)
 					local penance = is_spell_known_not_cooldown(47540)
 					local mindblastacharges = 0
-					if is_spell_known(8092) then
+					local holyfire = false
+					if specialization == 2 then
+						holyfire = is_spell_not_cooldown(14914)
+					elseif is_spell_known(8092) then
 						mindblastacharges = GetSpellCharges(8092)
 					end
 					local shadowworddeathcharges = 0
@@ -168,22 +180,26 @@ local function cofunc(yd)
 									applied_debuff_list[589] = true
 								end
 							end
-							if penance and roundspellid == 585 then
-								roundspellid = 47540
-								penance = false
-							end
 							if isaoe == 2 and roundspellid == 585 then
 								if halo then
-									roundspellid = 120644
+									roundspellid = halospellid
 									halo = false
 								elseif divinestar then
-									roundspellid = 122121
+									roundspellid = divinestarspellid
 									divinestar = false
 								end
 							end
 							if roundspellid == 585 and shadowwordpain and not applied_debuff_list[589] then
 								roundspellid = 589
 								applied_debuff_list[589] = true
+							end
+							if penance and roundspellid == 585 then
+								roundspellid = 47540
+								penance = false
+							end
+							if holyfire and roundspellid == 585 then
+								roundspellid = 14914
+								holyfire = false
 							end
 							if applied_buff_list[375981] then
 								applied_buff_list[375981] = true
