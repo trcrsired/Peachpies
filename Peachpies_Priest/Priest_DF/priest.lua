@@ -173,7 +173,7 @@ local function cofunc(yd)
 									shadowcrash = false
 									applied_debuff_list[34914] = true
 									applied_debuff_list[589] = true
-								elseif vampirictouch and (not applied_debuff_list[34914] or not applied_debuff_list[589]) then
+								elseif vampirictouch and (not applied_debuff_list[34914] and not applied_debuff_list[589]) then
 									roundspellid = 34914
 									vampirictouch = false
 									applied_debuff_list[34914] = true
@@ -206,7 +206,7 @@ local function cofunc(yd)
 								mindblastacharges = 0
 								roundspellid = 8092
 							end
-							if 45 <= insanity and devouringplague then
+							if 50 <= insanity and devouringplague then
 								roundspellid = 335467
 								devouringplague = false
 							end
