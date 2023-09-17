@@ -230,22 +230,35 @@ function Peachpies.handle_range_healing_spell(spellid, grid_meta,grid_profile,
 	end
 	local health_deficits = 0
 
+	local inpvp = player_in_pvp()
+
 	local full_point = spell_healing_base
+
+	local scaled_shb = spell_healing_base
+
+	local caps = metadata.caps
+
+	if caps and 0 < caps and caps < #temp_tb then
+		local factor = caps / #temp_tb
+		scaled_shb = scaled_shb * factor
+		full_point = full_point * factor
+	end
+
 	local pvp_coeff = (1+crit * 0.5)
-	if player_in_pvp() then
+	local total_healing = spell_healing_base * pvp_coeff
+	local full_effect = total_healing
+	if inpvp then
 		full_point = full_point * 1.5
 		pvp_coeff = 1 + 0.5 * crit
 	else
 		full_point = full_point * 2
 		pvp_coeff = 1 + crit
 	end
-	local full_effect = spell_healing_base * pvp_coeff
-
 	if applytype == 1 then
-		local crtht = spell_healing_base * (1-crit)
+		local crtht = scaled_shb * (1-crit)
 		for i=1,#temp_tb do
 			local ele = temp_tb[i]
-			if ele < spell_healing_base then
+			if ele < scaled_shb then
 				health_deficits = health_deficits + ele
 			elseif ele < full_point then
 				health_deficits = health_deficits + crtht + crit * ele
@@ -283,9 +296,6 @@ function Peachpies.handle_range_healing_spell(spellid, grid_meta,grid_profile,
 		Peachpies_GridCenter(grid_profile,first_disappear_expiration-timestamp,gcd,gcd*3,grid_meta.bottom_text,"%.1f")
 	end
 
-	local total_healing = full_effect
-	local caps = metadata.caps
-
 	if caps then
 		total_healing = total_healing * caps
 		if health_deficits > total_healing then
@@ -294,7 +304,6 @@ function Peachpies.handle_range_healing_spell(spellid, grid_meta,grid_profile,
 	else
 		total_healing = total_healing * visible_counts
 	end
-
 	local manacost = metadata.manacost
 	if manacost then
 		health_deficits = health_deficits/manacost
