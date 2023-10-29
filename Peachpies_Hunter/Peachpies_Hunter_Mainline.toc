@@ -1,0 +1,7 @@
+## Interface: 100107
+## Author: cqwrteur
+## Title: Peachpies Hunter
+## LoadOnDemand: 1
+## X-PEACHPIES-CLASS: 3
+
+Hunter_DF/hunter.lua
