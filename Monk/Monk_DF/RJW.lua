@@ -6,7 +6,12 @@ local UnitInRange = UnitInRange
 Peachpies.AddCoroutine(coroutine.create(Peachpies.create_range_healing_spell_coroutine(
 {
 unit_in_range = function(u)
-	return CheckInteractDistance(u,3) and UnitInRange(u)
+	local visible = UnitIsVisible(u)
+	if InCombatLockdown() then
+		return CheckInteractDistance(u,3),visible
+	else
+		return UnitInRange(u),visible
+	end
 end,
 nameinfo = {key="monk_mw_rjw",spellid=196725},
 caps = 6,
