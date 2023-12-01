@@ -198,8 +198,17 @@ end
 local IsItemInRange = IsItemInRange
 local CheckInteractDistance = CheckInteractDistance
 local UnitInRange = UnitInRange
+local InCombatLockdown = InCombatLockdown
+local UnitIsVisible = UnitIsVisible
 
 function Peachpies.unit_range(uId)
+	if InCombatLockdown() then
+		if UnitInRange(uId) then return 43
+		elseif UnitIsVisible(uId) then
+			return 200
+		end
+		return
+	end
 	if IsItemInRange(90175, uId) then return 4
 	elseif IsItemInRange(16114, uId) then return 6
 	elseif IsItemInRange(8149, uId) then return 8
