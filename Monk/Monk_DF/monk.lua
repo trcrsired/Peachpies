@@ -69,9 +69,7 @@ local function cofunc(yd)
 			local player_self = UnitIsUnit("player","target")
 			if UnitAffectingCombat("player") or (not player_self and UnitIsVisible("target")) then
 				local t = unit_range("target")
-				if t then
-					Peachpies_GridCenter(grids_profile,t,10,43,center_text1,"%d")
-				end
+				Peachpies_GridCenter(grids_profile,t,10,43,center_text1)
 				Peachpies_GridsSpellMinitoring(grids_profile,grids_meta,monitored)
 				local castname, casttext, casttexture, caststartTimeMS, castendTimeMS, castisTradeSkill, castcastID, castnotInterruptible, castspellId = UnitCastingInfo("player")
 				local charges = UnitPower("player", 12)
@@ -311,7 +309,7 @@ local function cofunc(yd)
 						spell_queue[#spell_queue+1] = queue_spell
 					end
 				end
-				Peachpies_GridCenter(grids_profile,enemies_in_range_count(8),3,10,center_text5,"%d")
+				--Peachpies_GridCenter(grids_profile,enemies_in_range_count(8),3,10,center_text5,"%d")
 				GridsQueueSpells(castspellId,castendTimeMS,spell_queue,backgrounds,cooldowns,single_target_grids_count,single_target_grids_count+aoe_grids_count-2)
 				globalframe:Show()
 			else

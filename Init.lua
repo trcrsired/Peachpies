@@ -203,10 +203,6 @@ local UnitIsVisible = UnitIsVisible
 
 function Peachpies.unit_range(uId)
 	if InCombatLockdown() then
-		if UnitInRange(uId) then return 43
-		elseif UnitIsVisible(uId) then
-			return 200
-		end
 		return
 	end
 	if IsItemInRange(90175, uId) then return 4

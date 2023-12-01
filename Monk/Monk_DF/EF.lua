@@ -1,14 +1,14 @@
 local Peachpies = LibStub("AceAddon-3.0"):GetAddon("Peachpies")
 
-local CheckInteractDistance = CheckInteractDistance
 local UnitIsVisible = UnitIsVisible
 local InCombatLockdown = InCombatLockdown
+local CheckInteractDistance = CheckInteractDistance
 
 Peachpies.AddCoroutine(coroutine.create(Peachpies.create_range_healing_spell_coroutine(
 {
 unit_in_range = function(u)
 	local visible = UnitIsVisible(u)
-	if InCombatLockdown() then
+	if not InCombatLockdown() then
 		return CheckInteractDistance(u,1),visible
 	else
 		return UnitInRange(u),visible

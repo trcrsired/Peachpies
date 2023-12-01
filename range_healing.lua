@@ -86,6 +86,7 @@ function Peachpies.handle_range_healing_spell(spellid, grid_meta,grid_profile,
 	end
 
 	local with_buff = metadata.with_buff
+	local pbuff = with_buff and metadata.pbuff
 
 	local range_function = metadata.unit_in_range
 	local visible_counts = 0
@@ -107,10 +108,11 @@ function Peachpies.handle_range_healing_spell(spellid, grid_meta,grid_profile,
 
 	local nameplates
 
+--[[
 	if metadata.nameplates then
 		nameplates = C_NamePlate_GetNamePlates()
 	end
-
+]]
 	while true do
 		local u
 		if i <= members then
@@ -152,16 +154,22 @@ function Peachpies.handle_range_healing_spell(spellid, grid_meta,grid_profile,
 						break
 					end
 					if spellId == with_buff then
-						local start_timestamp = expirationTime - duration
-						if timestamp < expirationTime and start_timestamp <= timestamp then
-							this_has_buff = true
-							if expirationTime < first_disappear then
-								first_disappear = expirationTime
-								first_disappear_expiration = expirationTime
+						if pbuff then
+							if duration == 0 then
+								this_has_buff = true
 							end
-							if maximum_expiration < start_timestamp then
-								maximum_expiration = start_timestamp
-								--effective_duration = duration
+						else
+							local start_timestamp = expirationTime - duration
+							if timestamp < expirationTime and start_timestamp <= timestamp then
+								this_has_buff = true
+								if expirationTime < first_disappear then
+									first_disappear = expirationTime
+									first_disappear_expiration = expirationTime
+								end
+								if maximum_expiration < start_timestamp then
+									maximum_expiration = start_timestamp
+									--effective_duration = duration
+								end
 							end
 						end
 						break
@@ -291,7 +299,7 @@ function Peachpies.handle_range_healing_spell(spellid, grid_meta,grid_profile,
 
 	Peachpies_GridCenter(grid_profile,applying_counts,effective_green_number,effective_blue_number,grid_meta.center_text)
 
-	if with_buff then
+	if with_buff and not pbuff then
 		local gcd = 1.5/(1+GetHaste()/100)
 		Peachpies_GridCenter(grid_profile,first_disappear_expiration-timestamp,gcd,gcd*3,grid_meta.bottom_text,"%.1f")
 	end
