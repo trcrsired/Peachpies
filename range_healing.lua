@@ -34,14 +34,16 @@ local C_NamePlate_GetNamePlates = C_NamePlate.GetNamePlates
 local temp_tb = {}
 
 function Peachpies.handle_range_healing_spell(spellid, grid_meta,grid_profile,
-	bar_meta,bar_profile,metadata)
+	bar_meta,bar_profile,metadata,spells)
 
 	local grid_background = grid_meta.background
 	local grid_cooldown = grid_meta.cooldown
-	local bar_frame = grid_meta.frame
-	local grid_frame = bar_meta.frame
+	local bar_frame
+	if bar_meta then
+		bar_frame = bar_meta.frame
+	end
+	local grid_frame = grid_meta.frame
 	local grid_hider = grid_meta.actionbutton_hider
-
 	if spellid and not is_spell_known(spellid) then
 		grid_frame:Hide()
 		bar_frame:Hide()
@@ -50,7 +52,6 @@ function Peachpies.handle_range_healing_spell(spellid, grid_meta,grid_profile,
 		end
 		return
 	end
-
 	grid_background:SetTexture(GetSpellTexture(spellid))
 
 	local timestamp = GetTime()
@@ -212,14 +213,41 @@ function Peachpies.handle_range_healing_spell(spellid, grid_meta,grid_profile,
 
 --	print("range_healing",204," visible",visible_counts, "applying",applying_counts)
 	if visible_counts == 0 then
-		bar_frame:Hide()
+		if bar_frame then
+			bar_frame:Hide()
+		end
 		grid_frame:Hide()
 		if grid_hider then
 			grid_hider:Show()
 		end
 		return
 	end
+	local effective_green_number = metadata.effective_green_number
+	local effective_blue_number = metadata.effective_blue_number
+	if effective_green_number == nil then
+		effective_green_number = visible_counts * 0.8
+		effective_blue_number = visible_counts
+	else
+		local effective_callback = metadata.effective_callback
+		if effective_callback then
+			effective_green_number,effective_blue_number =
+			effective_callback(temp_tb,applying_counts,visible_counts,members)
+		end
+	end
 
+	if bar_frame == nil then
+		Peachpies_GridCenter(grid_profile,applying_counts,effective_green_number,effective_blue_number,grid_meta.center_text)
+		if with_buff and not pbuff then
+			local gcd = 1.5/(1+GetHaste()/100)
+			Peachpies_GridCenter(grid_profile,first_disappear_expiration-timestamp,gcd,gcd*3,grid_meta.bottom_text,"%.1f")
+		end
+
+		if grid_hider then
+			grid_hider:Show()
+		end
+		grid_frame:Show()
+		return
+	end
 	local crit = GetCritChance() / 100
 	local spell_healing_base = GetSpellBonusHealing() * metadata.constant
 
@@ -284,18 +312,7 @@ function Peachpies.handle_range_healing_spell(spellid, grid_meta,grid_profile,
 			end
 		end
 	end
-	local effective_green_number = metadata.effective_green_number
-	local effective_blue_number = metadata.effective_blue_number
-	if effective_green_number == nil then
-		effective_green_number = visible_counts * 0.8
-		effective_blue_number = visible_counts
-	else
-		local effective_callback = metadata.effective_callback
-		if effective_callback then
-			effective_green_number,effective_blue_number =
-			effective_callback(temp_tb,applying_counts,visible_counts,members)
-		end
-	end
+
 
 	Peachpies_GridCenter(grid_profile,applying_counts,effective_green_number,effective_blue_number,grid_meta.center_text)
 
@@ -317,7 +334,6 @@ function Peachpies.handle_range_healing_spell(spellid, grid_meta,grid_profile,
 		health_deficits = health_deficits/manacost
 		total_healing = total_healing/manacost
 	end
-
 	local bret = Peachpies_Barset(bar_profile,health_deficits,total_healing,bar_meta)
 	if grid_hider then
 		if bret then
@@ -355,12 +371,18 @@ function Peachpies.create_range_healing_spell_coroutine(metadata)
 		if nameinfobar == nil then
 			nameinfobar = nameinfo
 		end
-		local bar_meta = Peachpies.CreateBar(nameinfobar)
+		local bar_meta
+		if not metadata.auraonly then
+			bar_meta = Peachpies.CreateBar(nameinfobar)
+		end
 		local grid_frame = grid_meta.frame
 		local grid_secureframe = grid_meta.globalframe
 		local grid_hider = grid_meta.actionbutton_hider
 		local grid_profile
-		local bar_frame = bar_meta.frame
+		local bar_frame
+		if bar_frame then
+			bar_frame = bar_meta.frame
+		end
 		local bar_profile
 		local spells = metadata.spells
 		local specialization = metadata.specialization
@@ -372,9 +394,11 @@ function Peachpies.create_range_healing_spell_coroutine(metadata)
 				if ( specialization == nil or GetSpecialization() == specialization ) and current_spell then
 					local profile = Peachpies.GetProfile(nameinfo.key)
 					grid_profile = Peachpies.GridConfig(profile,grid_meta)
-					bar_profile = Peachpies.BarConfig(profile,bar_meta)
-					if grid_profile.Enable or bar_profile.Enable then
-						if grid_profile.Enable then
+					if bar_meta ~= nil and not bar_profile then
+						bar_profile = Peachpies.BarConfig(profile,bar_meta)
+					end
+					if (grid_profile and grid_profile.Enable) or (bar_profile and bar_profile.Enable) then
+						if grid_profile and grid_profile.Enable then
 							if grid_hider then
 								if not InCombatLockdown() and not grid_secureframe:IsForbidden() then
 									grid_secureframe:Show()
@@ -386,7 +410,9 @@ function Peachpies.create_range_healing_spell_coroutine(metadata)
 					end
 				end
 				grid_frame:Hide()
-				bar_frame:Hide()
+				if bar_frame then
+					bar_frame:Hide()
+				end
 				if grid_hider then
 					grid_hider:Show()
 					if not InCombatLockdown() and not grid_secureframe:IsForbidden() then
@@ -398,7 +424,7 @@ function Peachpies.create_range_healing_spell_coroutine(metadata)
 			else
 				handle_range_healing_spell(current_spell,
 				grid_meta,grid_profile,
-				bar_meta,bar_profile,metadata)
+				bar_meta,bar_profile,metadata,spells)
 			end
 			yd = coyield()
 			until true

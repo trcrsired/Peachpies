@@ -5,3 +5,4 @@
 ## X-PEACHPIES-CLASS: 5
 
 Priest_DF/priest.lua
+Priest_DF/atonement.lua
