@@ -30,6 +30,7 @@ local UnitIsUnit = UnitIsUnit
 local UnitInParty = UnitInParty
 local GetHaste = GetHaste
 local C_NamePlate_GetNamePlates = C_NamePlate.GetNamePlates
+local math_huge = math.huge
 
 local temp_tb = {}
 
@@ -93,7 +94,9 @@ function Peachpies.handle_range_healing_spell(spellid, grid_meta,grid_profile,
 	local visible_counts = 0
 	local applying_counts = 0
 
-	local first_disappear = math.huge
+--	local eventfeedback = metadata.eventfeedback
+
+	local first_disappear = math_huge
 	local first_disappear_expiration = 0
 	local maximum_expiration = 0
 --	local effective_duration = metadata.effective_duration
