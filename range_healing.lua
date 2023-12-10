@@ -34,8 +34,23 @@ local math_huge = math.huge
 
 local temp_tb = {}
 
-function Peachpies.handle_range_healing_spell(spellid, grid_meta,grid_profile,
-	bar_meta,bar_profile,metadata,spells)
+local function find_known_spell(spells)
+	if type(spells) == "table" then
+		for i=1,#spells do
+			local spellsi = spells[i]
+			if is_spell_known(spellsi) then
+				return spellsi
+			end
+		end
+	elseif spells then
+		if is_spell_known(spells) then
+			return spells
+		end
+	end
+end
+
+function Peachpies.handle_range_healing_spell(spells, grid_meta,grid_profile,
+	bar_meta,bar_profile,metadata)
 
 	local grid_background = grid_meta.background
 	local grid_cooldown = grid_meta.cooldown
@@ -45,6 +60,8 @@ function Peachpies.handle_range_healing_spell(spellid, grid_meta,grid_profile,
 	end
 	local grid_frame = grid_meta.frame
 	local grid_hider = grid_meta.actionbutton_hider
+
+	local spellid = find_known_spell(spells)
 	if spellid and not is_spell_known(spellid) then
 		grid_frame:Hide()
 		bar_frame:Hide()
@@ -425,9 +442,9 @@ function Peachpies.create_range_healing_spell_coroutine(metadata)
 				yd=coyield()
 				break
 			else
-				handle_range_healing_spell(current_spell,
+				handle_range_healing_spell(spells,
 				grid_meta,grid_profile,
-				bar_meta,bar_profile,metadata,spells)
+				bar_meta,bar_profile,metadata)
 			end
 			yd = coyield()
 			until true
