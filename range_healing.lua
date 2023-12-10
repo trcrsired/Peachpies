@@ -146,8 +146,8 @@ function Peachpies.handle_range_healing_spell(spells, grid_meta,grid_profile,
 
 
 	local i = 1
---[[
 	local nameplates
+--[[
 	if metadata.nameplates then
 		nameplates = C_NamePlate_GetNamePlates()
 	end
@@ -187,7 +187,7 @@ function Peachpies.handle_range_healing_spell(spells, grid_meta,grid_profile,
 			if with_buff then
 				this_has_buff = false
 				for buffi=1,40 do
-					local name, icon, count, debuffType, duration, expirationTime, source, isStealable, 
+					local name, icon, count, debuffType, duration, expirationTime, source, isStealable,
 					nameplateShowPersonal, spellId = UnitAura(u,buffi,"PLAYER|HELPFUL")
 					if name == nil then
 						break
