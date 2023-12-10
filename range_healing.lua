@@ -31,6 +31,7 @@ local UnitInParty = UnitInParty
 local GetHaste = GetHaste
 local C_NamePlate_GetNamePlates = C_NamePlate.GetNamePlates
 local math_huge = math.huge
+local UnitGUID = UnitGUID
 
 local temp_tb = {}
 
@@ -50,8 +51,27 @@ local function find_known_spell(spells)
 end
 
 function Peachpies.handle_range_healing_spell(spells, grid_meta,grid_profile,
-	bar_meta,bar_profile,metadata)
-
+	bar_meta,bar_profile,metadata, temporary_data, yd, arg0, arg1, arg2, arg3, arg4)
+	local with_buff = metadata.with_buff
+--[[
+	local temporary_data1 = temporary_data[1]
+	if arg0 == "UNIT_AURA" then
+		if arg2 then
+			if arg2.isFullUpdate then
+				return
+			end
+			for i=1,#arg2 do
+			if arg2.spellId == with_buff then
+				local sourceunit = arg2.sourceunit
+				if sourceunit and UnitIsUnit(sourceunit,"player") then
+					temporary_data1[arg1] = arg2
+					quit_func = false
+				end
+			end
+			end
+		end
+	end
+]]
 	local grid_background = grid_meta.background
 	local grid_cooldown = grid_meta.cooldown
 	local bar_frame
@@ -104,7 +124,7 @@ function Peachpies.handle_range_healing_spell(spells, grid_meta,grid_profile,
 		members = 1
 	end
 
-	local with_buff = metadata.with_buff
+
 	local pbuff = with_buff and metadata.pbuff
 
 	local range_function = metadata.unit_in_range
@@ -126,10 +146,8 @@ function Peachpies.handle_range_healing_spell(spells, grid_meta,grid_profile,
 
 
 	local i = 1
-
-	local nameplates
-
 --[[
+	local nameplates
 	if metadata.nameplates then
 		nameplates = C_NamePlate_GetNamePlates()
 	end
@@ -218,20 +236,19 @@ function Peachpies.handle_range_healing_spell(spells, grid_meta,grid_profile,
 				end
 				if is_applying then
 					applying_counts = applying_counts + 1
-				end
-				local h = UnitHealth(u)
-				local m = UnitHealthMax(u)
-				if UnitGetTotalHealAbsorbs then
-					m = m + UnitGetTotalHealAbsorbs(u)
-				end
-				if h < m then
-					temp_tb[#temp_tb+1] = m-h
+					local h = UnitHealth(u)
+					local m = UnitHealthMax(u)
+					if UnitGetTotalHealAbsorbs then
+						m = m + UnitGetTotalHealAbsorbs(u)
+					end
+					if h < m then
+						temp_tb[#temp_tb+1] = m-h
+					end
 				end
 			end
 		end
 	end
 
---	print("range_healing",204," visible",visible_counts, "applying",applying_counts)
 	if visible_counts == 0 then
 		if bar_frame then
 			bar_frame:Hide()
@@ -384,7 +401,7 @@ end
 local handle_range_healing_spell = Peachpies.handle_range_healing_spell
 
 function Peachpies.create_range_healing_spell_coroutine(metadata)
-	return function(yd)
+	return function(ydinit)
 		local nameinfo = metadata.nameinfo
 		local grid_meta = Peachpies.CreateGrid(nameinfo,metadata.secure)
 		local nameinfobar = metadata.nameinfobar
@@ -407,6 +424,8 @@ function Peachpies.create_range_healing_spell_coroutine(metadata)
 		local spells = metadata.spells
 		local specialization = metadata.specialization
 		local current_spell
+		local yd, arg0, arg1, arg2, arg3, arg4 = ydinit, nil, nil, nil, nil, nil
+		local temporary_data = {{},{}}
 		while true do
 			repeat
 			if yd == 0 then
@@ -439,14 +458,14 @@ function Peachpies.create_range_healing_spell_coroutine(metadata)
 						grid_secureframe:Hide()
 					end
 				end
-				yd=coyield()
+				yd, arg0, arg1, arg2, arg3, arg4=coyield()
 				break
 			else
 				handle_range_healing_spell(spells,
 				grid_meta,grid_profile,
-				bar_meta,bar_profile,metadata)
+				bar_meta,bar_profile, metadata, temporary_data, yd, arg0, arg1, arg2, arg3, arg4)
 			end
-			yd = coyield()
+			yd, arg0, arg1, arg2, arg3, arg4 = coyield()
 			until true
 		end
 	end
