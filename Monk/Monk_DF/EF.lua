@@ -20,6 +20,7 @@ nameplates = true,
 constant = 0.5548,
 manacost = 7.2,
 specialization = 2,
-spells = 191837
+spells = 191837,
+allowothers = 1,
 }
 )))
