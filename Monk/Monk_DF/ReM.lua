@@ -12,5 +12,6 @@ specialization = 2,
 effective_duration = 30,
 effective_green_number = 12,
 effective_blue_number = 15,
+caps = 5,
 }
 )))
