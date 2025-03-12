@@ -209,8 +209,8 @@ end
 local is_spell_known = Peachpies.is_spell_known
 
 
-local GetSpellTexture = GetSpellTexture
-local GetSpellCooldown = GetSpellCooldown
+local GetSpellTexture = Peachpies.GetSpellTexture
+local GetSpellCooldown = Peachpies.GetSpellCooldown
 local GetTime = GetTime
 
 function Peachpies.GridSpellMinitoring(tb,spellid,background,center_text,bottom_text,cooldown)

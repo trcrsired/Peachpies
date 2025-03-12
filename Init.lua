@@ -123,6 +123,16 @@ else
 	end
 end
 
+if GetSpellTexture then
+	local GetSpellTexture = GetSpellTexture
+	Peachpies.GetSpellTexture = function(spellIdentifier)
+		local filedataid = GetSpellTexture(spellIdentifier)
+		return filedataid,filedataid
+	end
+else
+	Peachpies.GetSpellTexture = C_Spell.GetSpellTexture
+end
+
 local coroutines = {}
 Peachpies.coroutines = coroutines
 

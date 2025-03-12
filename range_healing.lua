@@ -4,8 +4,8 @@ if not Peachpies then return end
 local IsInRaid = IsInRaid
 local IsInGroup = IsInGroup
 local GetNumGroupMembers = GetNumGroupMembers
-local GetSpellTexture = GetSpellTexture
-local GetSpellCooldown = GetSpellCooldown
+local GetSpellTexture = Peachpies.GetSpellTexture
+local GetSpellCooldown = Peachpies.GetSpellCooldown
 local GetSpellBonusHealing = GetSpellBonusHealing
 local GetCritChance = GetCritChance
 local UnitIsDeadOrGhost = UnitIsDeadOrGhost
