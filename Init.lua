@@ -12,6 +12,17 @@ Peachpies.cvar_width = cvar_width
 Peachpies.cvar_height = cvar_height
 Peachpies.cvar_min = min(cvar_width,cvar_height)
 
+local C_AddOns = C_AddOns
+if C_AddOns == nil then
+	C_AddOns = _G
+end
+
+local LoadAddOn = C_AddOns.LoadAddOn
+local GetNumAddOns = C_AddOns.GetNumAddOns
+local GetAddOnMetadata = C_AddOns.GetAddOnMetadata
+local IsAddOnLoaded = C_AddOns.IsAddOnLoaded
+local GetAddOnInfo = C_AddOns.GetAddOnInfo
+
 function Peachpies:OnInitialize()
 	local LibStub = LibStub
 	self.db = LibStub("AceDB-3.0"):New("PeachpiesDB",{},true)
