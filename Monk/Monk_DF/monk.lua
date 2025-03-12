@@ -171,8 +171,10 @@ local function cofunc(yd)
 				else
 					local blackout_kick_chi_consumptions = 1
 					local playerlevel = UnitLevel("player")
+					local rising_sun_kick_ignore_chi
 					if playerlevel < 17 then
 						blackout_kick_chi_consumptions = 3
+						rising_sun_kick_ignore_chi = true
 					end
 					for i=1,single_target_grids_count do
 						local queue_spell = 100780
@@ -188,7 +190,7 @@ local function cofunc(yd)
 							queue_spell = 113656
 							fists_of_fury_usable = false
 							single_charges = single_charges - 3
-						elseif rising_sun_kick_usable and 1 < single_charges and 20 < single_energy then
+						elseif rising_sun_kick_usable and 1 < single_charges and (rising_sun_kick_ignore_chi or 20 < single_energy) then
 							queue_spell = 107428
 							rising_sun_kick_usable = false
 							single_charges = single_charges - 2
