@@ -73,6 +73,17 @@ function Peachpies:loadevent(p,event,...)
 	end
 end
 
+
+if GetSpellCooldown then
+Peachpies.GetSpellCooldown = GetSpellCooldown
+else
+local C_Spell_GetSpellCooldown = C_Spell.GetSpellCooldown
+function Peachpies.GetSpellCooldown(...)
+	local t = C_Spell_GetSpellCooldown(...)
+	return t.startTime, t.duration, t.isEnabled, t.modRate
+end
+end
+
 local coroutines = {}
 Peachpies.coroutines = coroutines
 
@@ -259,7 +270,7 @@ end
 
 local is_spell_known = Peachpies.is_spell_known
 
-local GetSpellCooldown = GetSpellCooldown
+local GetSpellCooldown = Peachpies.GetSpellCooldown
 
 local function is_spell_not_cooldown(spellid)
 	local start, duration, enabled, modRate = GetSpellCooldown(spellid)
