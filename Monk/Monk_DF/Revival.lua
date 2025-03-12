@@ -27,8 +27,8 @@ raidcooldown2x = true,
 hide_on_cooldown = 8,
 secure = table.concat({
 	"/use [known:115310] ",
-	GetSpellInfo(115310),
+	revival_name,
 	";[known:388615] ",
-	GetSpellInfo(388615),nil}),
+	restoral_name,nil}),
 }
 )))
