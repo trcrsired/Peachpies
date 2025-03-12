@@ -243,6 +243,9 @@ function Peachpies.GridsSpellMonitoring(grid_profile,grids_meta,monitoredspells)
 	if buffregions == nil then
 		return
 	end
+	if monitoredspells == nil then
+		return
+	end
 	local framestbl = grids_meta.frames
 	local backgrounds = grids_meta.backgrounds
 	local center_texts = grids_meta.center_texts
