@@ -17,6 +17,7 @@ local is_spell_known_not_cooldown = Peachpies.is_spell_known_not_cooldown
 local enemies_in_range_count = Peachpies.enemies_in_range_count
 local IsUsableSpell = Peachpies.IsUsableSpell
 local GetSpellCharges = Peachpies.GetSpellCharges
+local UnitLevel = UnitLevel
 
 local monitored_spells =
 {
@@ -168,6 +169,11 @@ local function cofunc(yd)
 						spell_queue[#spell_queue+1] = queue_spell
 					end
 				else
+					local blackout_kick_chi_consumptions = 1
+					local playerlevel = UnitLevel("player")
+					if playerlevel < 17 then
+						blackout_kick_chi_consumptions = 3
+					end
 					for i=1,single_target_grids_count do
 						local queue_spell = 100780
 						if touch_of_death_usable then
@@ -186,12 +192,12 @@ local function cofunc(yd)
 							queue_spell = 107428
 							rising_sun_kick_usable = false
 							single_charges = single_charges - 2
-						elseif blackout_kick_usable and 0 < single_charges and 10 < single_energy then
+						elseif blackout_kick_usable and blackout_kick_chi_consumptions <= single_charges and 10 < single_energy then
 							queue_spell = 100784
 							if charges_free then
 								blackout_kick_usable = false
 							end
-							single_charges = single_charges - 1
+							single_charges = single_charges - blackout_kick_chi_consumptions
 						end
 						if queue_spell == 100780 then
 							single_charges = single_charges + 2
