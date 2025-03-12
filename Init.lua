@@ -117,6 +117,9 @@ else
 	local C_Spell_GetSpellInfo = C_Spell.GetSpellInfo
 	function Peachpies.GetSpellInfo(...)
 		local spellInfo = C_Spell_GetSpellInfo(...)
+		if spellInfo == nil then
+			return
+		end
 		-- name, rank, icon, castTime, minRange, maxRange, spellID, originalIcon
 		return spellInfo.name, spellInfo.rank, spellInfo.iconID, spellInfo.castTime,
 			spellInfo.minRange, spellInfo.maxRange, spellInfo.maxRange, spellInfo.originalIconID

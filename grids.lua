@@ -218,7 +218,7 @@ function Peachpies.GridSpellMinitoring(tb,spellid,background,center_text,bottom_
 		background:SetTexture(GetSpellTexture(spellid))
 		local ap_start, ap_duration, ap_enabled, ap_modRate  = GetSpellCooldown(spellid)
 		local gcd_start, gcd_duration, gcd_enabled, gcd_modRate = GetSpellCooldown(61304)
-		cooldown:SetCooldown(ap_start, ap_duration, ap_enabled, ap_modRate)
+		cooldown:SetCooldown(ap_start, ap_duration, ap_modRate)
 		if ap_duration ~= 0 or (gcd_duration ~=0 and ap_duration ~= gcd_duration) then
 			local remain_time = ap_start+ap_duration-GetTime()
 			local s = "%.0f"
@@ -281,7 +281,8 @@ function Peachpies.GridsQueueSpells(castingspellid,castendTimeMS,castingqueue,ba
 	for i=bgi,edi do
 		local spellid = castingqueue[starti]
 		backgrounds[i]:SetTexture(GetSpellTexture(spellid))
-		cooldowns[i]:SetCooldown(GetSpellCooldown(spellid))
+		local cd_start, cd_duration, cd_enabled, cd_modRate = GetSpellCooldown(spellid)
+		cooldowns[i]:SetCooldown(cd_start, cd_duration, cd_modRate)
 		starti = starti + 1
 	end
 end
