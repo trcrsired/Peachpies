@@ -84,6 +84,45 @@ function Peachpies.GetSpellCooldown(...)
 end
 end
 
+if IsUsableSpell then
+Peachpies.IsUsableSpell = IsUsableSpell
+else
+Peachpies.IsUsableSpell = C_Spell.IsSpellUsable
+end
+
+if GetSpellCharges then
+	Peachpies.GetSpellCharges = GetSpellCharges
+else
+	Peachpies.GetSpellCharges = C_Spell.GetSpellCharges
+end
+
+if UnitAura then
+	Peachpies.UnitAura = UnitAura
+else
+local C_UnitAuras_GetAuraDataByIndex = C_UnitAuras.GetAuraDataByIndex
+local AuraUtil_UnpackAuraData = AuraUtil.UnpackAuraData
+function Peachpies.UnitAura(...)
+	local auraData = C_UnitAuras_GetAuraDataByIndex(...)
+	if not auraData then
+		return
+	end
+	return AuraUtil_UnpackAuraData(auraData)
+end
+
+end
+
+if GetSpellInfo then
+	Peachpies.GetSpellInfo = GetSpellInfo
+else
+	local C_Spell_GetSpellInfo = C_Spell.GetSpellInfo
+	function Peachpies.GetSpellInfo(...)
+		local spellInfo = C_Spell_GetSpellInfo(...)
+		-- name, rank, icon, castTime, minRange, maxRange, spellID, originalIcon
+		return spellInfo.name, spellInfo.rank, spellInfo.iconID, spellInfo.castTime,
+			spellInfo.minRange, spellInfo.maxRange, spellInfo.maxRange, spellInfo.originalIconID
+	end
+end
+
 local coroutines = {}
 Peachpies.coroutines = coroutines
 
@@ -333,6 +372,8 @@ function Peachpies.enemies_in_range_count(range)
 	end
 	return count
 end
+
+local UnitAura = Peachpies.UnitAura
 
 function Peachpies.AurasList(tb,auras,unit,filter)
 	if tb == nil then

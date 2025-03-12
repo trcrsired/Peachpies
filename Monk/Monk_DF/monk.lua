@@ -10,13 +10,13 @@ local Peachpies_GridCenter = Peachpies.GridCenter
 local UnitIsUnit = UnitIsUnit
 local UnitAffectingCombat = UnitAffectingCombat
 local UnitIsVisible = UnitIsVisible
-local UnitAura = UnitAura
+local UnitAura = Peachpies.UnitAura
 local GridsQueueSpells = Peachpies.GridsQueueSpells
 local wipe = wipe
 local is_spell_known_not_cooldown = Peachpies.is_spell_known_not_cooldown
 local enemies_in_range_count = Peachpies.enemies_in_range_count
-local IsUsableSpell = IsUsableSpell
-local GetSpellCharges = GetSpellCharges
+local IsUsableSpell = Peachpies.IsUsableSpell
+local GetSpellCharges = Peachpies.GetSpellCharges
 
 local monitored_spells =
 {

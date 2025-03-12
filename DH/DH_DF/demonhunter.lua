@@ -15,12 +15,12 @@ local UnitIsUnit = UnitIsUnit
 local UnitAffectingCombat = UnitAffectingCombat
 local UnitIsVisible = UnitIsVisible
 local GetSpellCooldown = GetSpellCooldown
-local UnitAura = UnitAura
+local UnitAura = Peachpies.UnitAura
 local GridsQueueSpells = Peachpies.GridsQueueSpells
 local wipe = wipe
 local math_floor = math.floor
 local enemies_in_range_count = Peachpies.enemies_in_range_count
-local GetSpellCharges = GetSpellCharges
+local GetSpellCharges = Peachpies.GetSpellCharges
 
 local monitored_spells =
 {
