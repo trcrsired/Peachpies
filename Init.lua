@@ -275,30 +275,34 @@ local UnitInRange = UnitInRange or nop
 local InCombatLockdown = InCombatLockdown
 local UnitIsVisible = UnitIsVisible or nop
 local UnitIsUnit = UnitIsUnit
+local isRetail = WOW_PROJECT_MAINLINE == WOW_PROJECT_MAINLINE
+local isClassic = WOW_PROJECT_ID == (WOW_PROJECT_CLASSIC or 2)
+Peachpies.isRetail = isRetail
+Peachpies.isClassic = isClassic
 
 function Peachpies.unit_range(uId)
 	if UnitIsUnit("player", uId) then
 		return 0
 	end
-	if InCombatLockdown() and UnitIsFriend("player",uId) then
+	if InCombatLockdown() and UnitIsFriend("player", uId) then
 		return
 	end
-	if IsItemInRange(90175, uId) then return 4
-	elseif IsItemInRange(16114, uId) then return 6
+	if not isRetail and IsItemInRange(90175, uId) then return 4
+	elseif not isClassic and IsItemInRange(16114, uId) then return 6
 	elseif IsItemInRange(8149, uId) then return 8
 	elseif CheckInteractDistance(uId, 3) then return 10
 	elseif CheckInteractDistance(uId, 2) then return 11
-	elseif IsItemInRange(32321, uId) then return 13
+	elseif IsItemInRange(isClassic and 17626 or 32321, uId) then return 13
 	elseif IsItemInRange(6450, uId) then return 18
 	elseif IsItemInRange(21519, uId) then return 23
 	elseif IsItemInRange(13289, uId) then return 28
 	elseif CheckInteractDistance(uId, 1) then return 30
 	elseif IsItemInRange(1180, uId) then return 33
 	elseif UnitInRange(uId) then return 43
-	elseif IsItemInRange(32698, uId) then return 48
-	elseif IsItemInRange(116139, uId) then return 53
-	elseif IsItemInRange(32825, uId) then return 60
-	elseif IsItemInRange(35278, uId) then return 80
+	elseif not isClassic and IsItemInRange(32698, uId) then return 48
+	elseif not isClassic and IsItemInRange(116139, uId) then return 53
+	elseif not isClassic and IsItemInRange(32825, uId) then return 60
+	elseif not isClassic and IsItemInRange(35278, uId) then return 80
 	end
 end
 
