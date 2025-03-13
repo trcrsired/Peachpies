@@ -95,7 +95,7 @@ function Peachpies.handle_range_healing_spell(spells, grid_meta,grid_profile,
 	local timestamp = GetTime()
 	do
 		local start,duration,enabled,modrate = GetSpellCooldown(spellid)
-		grid_cooldown:SetCooldown(start,duration,enabled,modrate)
+		grid_cooldown:SetCooldown(start,duration,modrate)
 
 		local hide_on_cooldown = metadata.hide_on_cooldown
 		if hide_on_cooldown then
