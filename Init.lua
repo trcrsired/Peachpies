@@ -269,16 +269,12 @@ function Peachpies:OnEnable()
 		coroutine.wrap(cofunc)()
 	end
 end
-local IsItemInRange = IsItemInRange
-local CheckInteractDistance = CheckInteractDistance
-local UnitInRange = UnitInRange
-local InCombatLockdown = InCombatLockdown
-local UnitIsVisible = UnitIsVisible
+local IsItemInRange = IsItemInRange or nop
+local CheckInteractDistance = CheckInteractDistance or nop
+local UnitInRange = UnitInRange or nop
+local UnitIsVisible = UnitIsVisible or nop
 
 function Peachpies.unit_range(uId)
-	if InCombatLockdown() then
-		return
-	end
 	if IsItemInRange(90175, uId) then return 4
 	elseif IsItemInRange(16114, uId) then return 6
 	elseif IsItemInRange(8149, uId) then return 8
