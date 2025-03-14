@@ -275,6 +275,7 @@ local UnitInRange = UnitInRange or nop
 local InCombatLockdown = InCombatLockdown
 local UnitIsVisible = UnitIsVisible or nop
 local UnitIsUnit = UnitIsUnit
+local UnitCanAttack = UnitCanAttack
 local isRetail = WOW_PROJECT_MAINLINE == WOW_PROJECT_MAINLINE
 local isClassic = WOW_PROJECT_ID == (WOW_PROJECT_CLASSIC or 2)
 Peachpies.isRetail = isRetail
@@ -284,7 +285,7 @@ function Peachpies.unit_range(uId)
 	if UnitIsUnit("player", uId) then
 		return 0
 	end
-	if InCombatLockdown() and UnitIsFriend("player", uId) then
+	if InCombatLockdown() then
 		return
 	end
 	if not isRetail and IsItemInRange(90175, uId) then return 4
