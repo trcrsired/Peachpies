@@ -113,6 +113,7 @@ function Peachpies_Options.GenerateB(key,name,b)
 				desc_str = L[desc_str]
 			end
 		end
+		if name_str then
 		gm[k] =
 		{
 			name = name_str,
@@ -120,6 +121,7 @@ function Peachpies_Options.GenerateB(key,name,b)
 			type = "group",
 			args = b
 		}
+		end
 	end
 	Peachpies_Options.options.args[key] = 
 	{
