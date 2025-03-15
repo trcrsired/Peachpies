@@ -93,7 +93,17 @@ end
 if GetSpellCharges then
 	Peachpies.GetSpellCharges = GetSpellCharges
 else
-	Peachpies.GetSpellCharges = C_Spell.GetSpellCharges
+	local C_Spell_GetSpellCharges = C_Spell.GetSpellCharges
+	Peachpies.GetSpellCharges = function(...)
+		local chargeInfo = C_Spell_GetSpellCharges(...)
+		if chargeInfo then
+			return chargeInfo.currentCharges, chargeInfo.maxCharges,
+				chargeInfo.cooldownStartTime, chargeInfo.cooldownDuration,
+				chargeInfo.chargeModRate 
+		else
+			return 0,0,0,0,0
+		end
+	end
 end
 
 if UnitAura then
