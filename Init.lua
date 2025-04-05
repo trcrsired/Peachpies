@@ -355,6 +355,8 @@ end
 
 Peachpies.is_spell_not_cooldown = is_spell_not_cooldown
 
+Peachpies.IsSpellKnownOrOverridesKnown = IsSpellKnownOrOverridesKnown
+
 local function is_spell_known_not_cooldown(spellid)
 	if not is_spell_known(spellid) then
 		return nil

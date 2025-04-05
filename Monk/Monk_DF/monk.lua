@@ -13,11 +13,13 @@ local UnitIsVisible = UnitIsVisible
 local UnitAura = Peachpies.UnitAura
 local GridsQueueSpells = Peachpies.GridsQueueSpells
 local wipe = wipe
+local is_spell_not_cooldown = Peachpies.is_spell_not_cooldown
 local is_spell_known_not_cooldown = Peachpies.is_spell_known_not_cooldown
 local enemies_in_range_count = Peachpies.enemies_in_range_count
 local IsUsableSpell = Peachpies.IsUsableSpell
 local GetSpellCharges = Peachpies.GetSpellCharges
 local UnitLevel = UnitLevel
+local IsSpellKnownOrOverridesKnown = Peachpies.IsSpellKnownOrOverridesKnown
 
 local monitored_spells =
 {
@@ -85,7 +87,13 @@ local function cofunc(yd)
 				local fists_of_fury_usable = is_spell_known_not_cooldown(113656)
 				local aoe_fists_of_fury_usable = fists_of_fury_usable
 				local blackout_kick_usable = is_spell_known_not_cooldown(100784)
-				local rising_sun_kick_usable = is_spell_known_not_cooldown(107428)
+				local rushing_wind_kick_known = IsSpellKnownOrOverridesKnown(467307)
+				local rising_sun_kick_usable
+				if rushing_wind_kick_known then
+					rising_sun_kick_usable = is_spell_not_cooldown(467307)
+				else
+					rising_sun_kick_usable = is_spell_known_not_cooldown(107428)
+				end
 				local touch_of_death_usable = is_spell_known_not_cooldown(322109) and IsUsableSpell(322109)
 				local breath_of_fire_usable = is_spell_known_not_cooldown(115181)
 				local spinning_crane_kick_usable = is_spell_known_not_cooldown(101546)
